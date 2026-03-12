@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ZrhAi - AI Prompt Library</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-primary: #0a0a0f;
@@ -150,21 +154,30 @@ body { font-family:var(--font-main); background:var(--bg-primary); color:var(--t
   .categories{ justify-content:flex-start; flex-wrap:nowrap; }
 }
 
-/* Masonry */
+/* Masonry — 5-column CSS Grid, centered */
 .masonry-section { max-width:1400px; margin:0 auto; padding:24px; }
 .masonry-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
 .masonry-count { font-size:14px; color:var(--text-muted); }
-.masonry-grid { display:flex; gap:20px; }
-.masonry-col { flex:1; display:flex; flex-direction:column; gap:20px; }
+.masonry-grid {
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:16px;
+  justify-content:center;
+}
+@media (max-width:1200px){ .masonry-grid{ grid-template-columns:repeat(4, 1fr); } }
+@media (max-width:900px){ .masonry-grid{ grid-template-columns:repeat(3, 1fr); } }
+@media (max-width:640px){ .masonry-grid{ grid-template-columns:repeat(2, 1fr); } }
+@media (max-width:400px){ .masonry-grid{ grid-template-columns:1fr; } }
+.masonry-col { display:contents; /* flatten masonry-col wrapper so grid children render directly */ }
 
 /* Prompt Card */
-.prompt-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:var(--transition); animation:fadeUp 0.5s ease both; }
+.prompt-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:var(--transition); animation:fadeUp 0.35s ease both; contain:layout style paint; will-change:transform; }
 .prompt-card:hover { border-color:var(--border-hover); transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.4); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-.card-image-wrap { position:relative; overflow:hidden; background:var(--bg-secondary); }
+.card-image-wrap { position:relative; overflow:hidden; background:var(--bg-secondary); aspect-ratio:4/8; }
 .card-skeleton { position:absolute; inset:0; background:linear-gradient(90deg,var(--bg-secondary) 25%,var(--surface) 50%,var(--bg-secondary) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; min-height:200px; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-.card-image-wrap img { width:100%; display:block; transition:transform 0.5s ease, opacity 0.4s ease; }
+.card-image-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease, opacity 0.3s ease; will-change:opacity; }
 .prompt-card:hover .card-image-wrap img { transform:scale(1.05); }
 .card-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%); display:flex; flex-direction:column; justify-content:flex-end; padding:16px; opacity:0; transition:opacity 0.3s ease; }
 .prompt-card:hover .card-overlay { opacity:1; }
@@ -529,1064 +542,21 @@ body { font-family:var(--font-main); background:var(--bg-primary); color:var(--t
 <!-- ════════════════════════════════ -->
 <!-- FRONT PAGE                       -->
 <!-- ════════════════════════════════ -->
-<div class="page-front" id="pageFront">
-<div class="app-wrapper" id="appFront">
-    <nav class="navbar"><div class="navbar-inner">
-      <div class="nav-brand"><img class="nav-logo-img" src="assets/img/a.jpg" alt="ZrhAi--每日分享" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '&lt;div class='nav-logo'&gt;Ai&lt;/div&gt;');"><div><span class="nav-title" onclick="secretTap()">ZrhAi--每日分享</span><span class="nav-subtitle"> — AI Prompt Library</span></div></div>
-      <div class="nav-actions">
-        <button class="info-nav-btn" onclick="openInfoModal('btn_0041a84a0da4d8')">微信</button>
-        <button class="lang-btn active" onclick="state.lang='en';renderFront()">EN</button>
-        <button class="lang-btn " onclick="state.lang='zh';renderFront()">中文</button>
-        <button class="admin-nav-btn" onclick="goTo('admin')">⚙ Admin</button>
-      </div>
-    </div></nav>
-
-    <section class="hero">
-      <h1><span class="gradient-text">33+</span> Curated AI Prompts</h1>
-      <p>没有天赋，就用努力弥补</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-num">33</div><div class="hero-stat-label">Prompts</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Categories</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">AI Models</div></div>
-      </div>
-      <div class="search-wrap">
-        <div class="search-field">
-          <span class="search-icon">⌕</span>
-          <input class="search-input" type="text" id="frontSearch" placeholder="Search prompts by keyword or tag..." value="" oncompositionstart="this._ime=1" oncompositionend="this._ime=0" oninput="if(this._ime)return;state.searchDraft=this.value;" onkeydown="if(event.key==='Enter'){applyFrontSearch();}">
-        </div>
-        <button class="search-confirm " onclick="applyFrontSearch()">Search</button>
-      </div>
-    </section>
-
-    <div class="categories-wrap"><div class="categories">
-      <button class="cat-btn active" onclick="state.category='all';state.pageIndex=1;renderFront()">✦ All Prompts<span class="cat-count">33</span></button><button class="cat-btn " onclick="state.category='anime';state.pageIndex=1;renderFront()">🌸 Anime<span class="cat-count">7</span></button><button class="cat-btn " onclick="state.category='realistic';state.pageIndex=1;renderFront()">📷 Realistic<span class="cat-count">6</span></button><button class="cat-btn " onclick="state.category='cyberpunk';state.pageIndex=1;renderFront()">🌃 Cyberpunk<span class="cat-count">8</span></button><button class="cat-btn " onclick="state.category='fantasy';state.pageIndex=1;renderFront()">🐉 Fantasy<span class="cat-count">6</span></button><button class="cat-btn " onclick="state.category='3d';state.pageIndex=1;renderFront()">💎 3D Render<span class="cat-count">6</span></button>
-    </div></div>
-
-    <section class="masonry-section">
-      <div class="masonry-header"><div class="masonry-count">33 prompts</div></div>
-      
-        <div class="masonry-grid"><div class="masonry-col">
-          <div class="prompt-card" style="animation-delay:960ms" onclick="openModal(32)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-32" style="display: none;"></div>
-              <img src="assets/img/a.jpg" alt="测试导出1" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-32');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿
-测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿
-测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="测试导出1">测试导出1</h3>
-  <div class="card-actions-inline"><a class="card-showcase-btn" href="http://xhslink.com/o/8ICU44mqXJ8" target="_blank" rel="noopener" onclick="event.stopPropagation()">作品1</a><a class="card-showcase-btn" href="https://weibo.com/7619798979/QtNFpn7zR" target="_blank" rel="noopener" onclick="event.stopPropagation()">微博</a><a class="card-showcase-btn" href="https://www.toutiao.com/w/1856640203500554/?app=news_article&amp;category_new=profile_all&amp;module_name=Android_tt_url&amp;share_did=MS4wLjACAAAAVIY6CWt6Y9WBjDoXCG1pQlnE-TGDJyzlvXBJzKBJQro&amp;share_token=1518df85-f6a0-4c9a-92ca-a353f7a349ab&amp;share_uid=MS4wLjABAAAA6h77I1o_XC1Mr07Cc2-ErXoGWpi4aHHRDSlCl1KY036KqZmGwFKGC7YhsgEWSVHs&amp;timestamp=1772247271&amp;tt_from=copy_link&amp;upstream_biz=Android_url&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=copy_link&amp;source=m_redirect&amp;wid=1772247312020" target="_blank" rel="noopener" onclick="event.stopPropagation()">头条</a></div>
-  <div class="card-tags"><span class="tag">#测试1</span><span class="tag">#测试2</span><span class="tag">#测试3</span><span class="tag">#测试4</span><span class="tag">#测试5</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:840ms" onclick="openModal(28)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-28" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan6/400/600" alt="Enchanted Library" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-28');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Massive enchanted library with infinite bookshelves reaching into darkness above, floating glowing books, spiral staircases, warm candlelight, wizard studying at an ancient desk, magical dust motes in light beams, ultra wide angle`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Enchanted Library">Enchanted Library</h3>
-  
-  <div class="card-tags"><span class="tag">#library</span><span class="tag">#magic</span><span class="tag">#books</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:630ms" onclick="openModal(21)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-21" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/cyber4/400/540" alt="Cyberpunk Market" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-21');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Bustling cyberpunk night market in a neon-soaked alley, holographic food stall signs in Chinese and Japanese, augmented reality price tags floating in air, diverse crowd with cybernetic implants, steam from street food, puddles reflecting everything`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Cyberpunk Market">Cyberpunk Market</h3>
-  
-  <div class="card-tags"><span class="tag">#market</span><span class="tag">#night</span><span class="tag">#urban</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:510ms" onclick="openModal(17)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-17" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/anime4/400/420" alt="Chibi Witch" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-17');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Adorable chibi witch character, oversized pointy hat with stars, holding a glowing potion bottle, black cat familiar, sitting on a stack of spell books, sparkles and magical particles, pastel background, kawaii art style, clean line art`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Chibi Witch">Chibi Witch</h3>
-  
-  <div class="card-tags"><span class="tag">#chibi</span><span class="tag">#witch</span><span class="tag">#cute</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:390ms" onclick="openModal(13)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-13" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real3/400/500" alt="Product Shot Perfume" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-13');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Luxury perfume bottle product photography, crystal clear glass with amber liquid, dramatic rim lighting, floating water droplets frozen in time, dark marble surface, reflection, commercial advertising quality, Phase One IQ4, 120mm macro`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Product Shot Perfume">Product Shot Perfume</h3>
-  
-  <div class="card-tags"><span class="tag">#product</span><span class="tag">#perfume</span><span class="tag">#luxury</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:300ms" onclick="openModal(10)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-10" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real2/400/570" alt="Street Photography Tokyo" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-10');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Cinematic street photography in Shinjuku Tokyo at night, neon signs reflecting on wet pavement, lone figure with umbrella, shallow depth of field, Fujifilm X-T5, 23mm f/1.4, film grain, moody atmosphere, Blade Runner vibes`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Street Photography Tokyo">Street Photography Tokyo</h3>
-  
-  <div class="card-tags"><span class="tag">#street</span><span class="tag">#tokyo</span><span class="tag">#night</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:150ms" onclick="openModal(5)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-5" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan1/400/520" alt="Fantasy Castle Clouds" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-5');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`A grand fantasy castle floating among golden clouds at sunset, waterfalls cascading into the void below, flying dragons in the distance, magical aurora in the sky, intricate Gothic architecture, matte painting style, epic composition`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Fantasy Castle Clouds">Fantasy Castle Clouds</h3>
-  
-  <div class="card-tags"><span class="tag">#castle</span><span class="tag">#clouds</span><span class="tag">#magical</span></div>
-</div>
-          </div></div><div class="masonry-col">
-          <div class="prompt-card" style="animation-delay:900ms" onclick="openModal(30)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-30" style="display: none;"></div>
-              <img src="assets/img/a.jpg" alt="PostLine" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-30');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="PostLine">PostLine</h3>
-  
-  <div class="card-tags"><span class="tag">#apocalypse</span><span class="tag">#garden</span><span class="tag">#nature</span><span class="tag">#an2tu</span><span class="tag">#natur</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:810ms" onclick="openModal(27)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-27" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/anime6/400/400" alt="Pixel Art Dungeon" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-27');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`16-bit pixel art RPG dungeon scene, treasure chest glowing in torchlight, skeleton enemies, hero character with sword and shield, stone walls with moss, mysterious doorway, retro gaming aesthetic, detailed sprite work, nostalgic color palette`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Pixel Art Dungeon">Pixel Art Dungeon</h3>
-  
-  <div class="card-tags"><span class="tag">#pixel</span><span class="tag">#dungeon</span><span class="tag">#retro</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:720ms" onclick="openModal(24)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-24" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan5/400/580" alt="Dragon Rider" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-24');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Epic dragon rider soaring through storm clouds, massive red dragon with battle scars, rider in gleaming plate armor, lightning illuminating the scene, rain and wind effects, dramatic low angle perspective, fantasy book cover quality`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Dragon Rider">Dragon Rider</h3>
-  
-  <div class="card-tags"><span class="tag">#dragon</span><span class="tag">#rider</span><span class="tag">#epic</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:570ms" onclick="openModal(19)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-19" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan4/400/350" alt="Floating Islands" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-19');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Breathtaking floating islands connected by rope bridges, waterfalls pouring into clouds below, lush green vegetation, small village with thatched roofs, airships passing between islands, golden hour lighting, adventure game concept art, panoramic view`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Floating Islands">Floating Islands</h3>
-  
-  <div class="card-tags"><span class="tag">#floating</span><span class="tag">#island</span><span class="tag">#adventure</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:480ms" onclick="openModal(16)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-16" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/cyber3/400/440" alt="Vaporwave City" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-16');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Vaporwave aesthetic cityscape, pink and cyan neon grid floor, floating Greek statues, palm trees with gradient colors, retro sun setting behind skyscrapers, VHS scan lines, chromatic aberration, 80s retrofuturism, synthwave mood`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Vaporwave City">Vaporwave City</h3>
-  
-  <div class="card-tags"><span class="tag">#vaporwave</span><span class="tag">#retro</span><span class="tag">#aesthetic</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:360ms" onclick="openModal(12)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-12" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/anime3/400/450" alt="Sakura Festival" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-12');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Anime illustration of a traditional Japanese spring festival, cherry blossoms in full bloom, lanterns hanging between trees, characters in colorful yukata, food stalls with warm light, evening sky gradient, detailed background art, Makoto Shinkai style colors`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Sakura Festival">Sakura Festival</h3>
-  
-  <div class="card-tags"><span class="tag">#sakura</span><span class="tag">#festival</span><span class="tag">#spring</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:240ms" onclick="openModal(8)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-8" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan2/400/600" alt="Underwater Temple" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-8');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Ancient underwater temple with bioluminescent coral growing on columns, schools of exotic fish, sunlight rays penetrating the ocean surface, mosaic floors with golden patterns, mysterious glowing runes, photorealistic, volumetric lighting`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Underwater Temple">Underwater Temple</h3>
-  
-  <div class="card-tags"><span class="tag">#underwater</span><span class="tag">#temple</span><span class="tag">#ancient</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:120ms" onclick="openModal(4)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-4" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real1/400/550" alt="Realistic Portrait Lady" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-4');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Professional portrait photography of a 30-year-old woman with freckles, natural red hair, golden hour sunlight through window, shallow depth of field, Canon EOS R5, 85mm f/1.4, warm tones, magazine quality`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Realistic Portrait Lady">Realistic Portrait Lady</h3>
-  
-  <div class="card-tags"><span class="tag">#portrait</span><span class="tag">#woman</span><span class="tag">#photography</span></div>
-</div>
-          </div></div><div class="masonry-col">
-          <div class="prompt-card" style="animation-delay:930ms" onclick="openModal(31)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-31" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/cyber5/400/490" alt="Post-Apocalyptic Garden" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-31');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Post-Apocalyptic Garden">Post-Apocalyptic Garden</h3>
-  
-  <div class="card-tags"><span class="tag">#apocalypse</span><span class="tag">#garden</span><span class="tag">#nature</span><span class="tag">#话多</span><span class="tag">#nice</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:750ms" onclick="openModal(25)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-25" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d5/400/460" alt="Cute Robot Friend" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-25');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Adorable small robot character with big expressive LED eyes, rounded white body with mint accents, tiny antenna, sitting on a park bench reading a book, autumn leaves falling, Pixar quality render, subsurface scattering, warm afternoon light`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Cute Robot Friend">Cute Robot Friend</h3>
-  
-  <div class="card-tags"><span class="tag">#robot</span><span class="tag">#cute</span><span class="tag">#character</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:690ms" onclick="openModal(23)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-23" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real5/400/500" alt="Architectural Interior" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-23');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Stunning modern interior design photography, double-height living room with floor-to-ceiling windows, minimalist Japandi aesthetic, concrete and warm wood, single statement art piece, natural light flooding in, Leica Q3 wide angle`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Architectural Interior">Architectural Interior</h3>
-  
-  <div class="card-tags"><span class="tag">#interior</span><span class="tag">#architecture</span><span class="tag">#modern</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:540ms" onclick="openModal(18)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-18" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real4/400/400" alt="Food Photography Ramen" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-18');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Award-winning food photography of a steaming bowl of tonkotsu ramen, perfectly placed chashu pork slices, soft-boiled egg halved showing golden yolk, green onions, nori, steam rising, dark moody background, overhead angle, Nikon Z9, 50mm`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Food Photography Ramen">Food Photography Ramen</h3>
-  
-  <div class="card-tags"><span class="tag">#food</span><span class="tag">#ramen</span><span class="tag">#japanese</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:450ms" onclick="openModal(15)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-15" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/fan3/400/620" alt="Dark Elf Sorceress" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-15');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Dark elf sorceress casting a spell, purple energy swirling around hands, silver hair flowing in magical wind, intricate dark armor with glowing runes, ancient forest background with fireflies, dramatic backlighting, fantasy character design, detailed face`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Dark Elf Sorceress">Dark Elf Sorceress</h3>
-  
-  <div class="card-tags"><span class="tag">#elf</span><span class="tag">#magic</span><span class="tag">#dark</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:270ms" onclick="openModal(9)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-9" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d2/400/400" alt="Isometric Room" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-9');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Isometric 3D render of a cozy artist studio room, warm lighting, miniature furniture, paint supplies on wooden desk, cat sleeping on cushion, plants on windowsill, soft shadows, pastel color palette, tilt-shift effect, blender render`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Isometric Room">Isometric Room</h3>
-  
-  <div class="card-tags"><span class="tag">#isometric</span><span class="tag">#room</span><span class="tag">#cute</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:180ms" onclick="openModal(6)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-6" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/anime2/400/400" alt="Neon Cat Lofi" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-6');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Cute anime cat wearing headphones sitting at a desk with a laptop, lo-fi aesthetic, neon purple and pink lighting, rainy window background, pixel art elements, cozy room with plants, warm atmosphere, kawaii style`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Neon Cat Lofi">Neon Cat Lofi</h3>
-  
-  <div class="card-tags"><span class="tag">#cat</span><span class="tag">#lofi</span><span class="tag">#neon</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:90ms" onclick="openModal(3)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-3" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d1/400/480" alt="3D Crystal Dragon" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-3');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`3D render of a magnificent crystal dragon, transparent body refracting rainbow light, perched on an obsidian rock, volumetric fog, caustic light effects, octane render, hyper detailed, studio lighting, 4k`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="3D Crystal Dragon">3D Crystal Dragon</h3>
-  
-  <div class="card-tags"><span class="tag">#dragon</span><span class="tag">#crystal</span><span class="tag">#render</span></div>
-</div>
-          </div></div><div class="masonry-col">
-          <div class="prompt-card" style="animation-delay:870ms" onclick="openModal(29)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-29" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d6/400/450" alt="Glass Morphism UI" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-29');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Glassmorphism UI design mockup floating in space, frosted glass cards with colorful gradient backgrounds, soft shadows, rounded corners, modern dashboard layout, iOS inspired, clean typography, light theme, 3D perspective, figma quality render`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Glass Morphism UI">Glass Morphism UI</h3>
-  
-  <div class="card-tags"><span class="tag">#glassmorphism</span><span class="tag">#ui</span><span class="tag">#modern</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:780ms" onclick="openModal(26)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-26" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/real6/400/520" alt="Double Exposure Wolf" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-26');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Double exposure portrait of a wolf and pine forest, starry night sky visible through the silhouette, northern lights in green and purple, snow-capped mountains in the background, artistic photography, high contrast, moody atmosphere`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Double Exposure Wolf">Double Exposure Wolf</h3>
-  
-  <div class="card-tags"><span class="tag">#double-exposure</span><span class="tag">#wolf</span><span class="tag">#nature</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:660ms" onclick="openModal(22)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-22" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/anime5/400/380" alt="Studio Ghibli Meadow" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-22');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Studio Ghibli inspired landscape, vast green meadow with wildflowers swaying in gentle breeze, cumulus clouds casting soft shadows, small cottage in the distance, girl with straw hat walking on path, nostalgic summer day, painterly style`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Studio Ghibli Meadow">Studio Ghibli Meadow</h3>
-  
-  <div class="card-tags"><span class="tag">#ghibli</span><span class="tag">#meadow</span><span class="tag">#peaceful</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:600ms" onclick="openModal(20)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-20" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d4/400/500" alt="Abstract Fluid Art" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-20');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Nanobanana Pro</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Abstract fluid art simulation, swirling metallic gold and deep ocean blue liquids, iridescent surface tension, macro photography style, satisfying ASMR aesthetic, high viscosity, studio lighting on dark background, 8k resolution, cinema 4D + Octane`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Abstract Fluid Art">Abstract Fluid Art</h3>
-  
-  <div class="card-tags"><span class="tag">#abstract</span><span class="tag">#fluid</span><span class="tag">#colorful</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:420ms" onclick="openModal(14)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-14" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/3d3/400/350" alt="Low Poly Mountain" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-14');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Low poly geometric mountain landscape, triangular facets in gradient sunset colors, mirror lake reflection, pine trees as simple shapes, deer silhouette, minimal clouds, stylized art, cinema 4D render, warm orange to purple palette`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Low Poly Mountain">Low Poly Mountain</h3>
-  
-  <div class="card-tags"><span class="tag">#lowpoly</span><span class="tag">#mountain</span><span class="tag">#landscape</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:330ms" onclick="openModal(11)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-11" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/cyber2/400/580" alt="Mech Warrior" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-11');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Stable Diffusion</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Giant mech warrior standing in a destroyed cityscape, battle damage and sparks, pilot visible through cracked cockpit glass, missile pods and energy weapons, dramatic smoke and fire, military sci-fi, Titanfall inspired, epic scale, dynamic pose`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Mech Warrior">Mech Warrior</h3>
-  
-  <div class="card-tags"><span class="tag">#mech</span><span class="tag">#robot</span><span class="tag">#battle</span></div>
-</div>
-          </div>
-          <div class="prompt-card" style="animation-delay:210ms" onclick="openModal(7)">
-            <div class="card-image-wrap">
-              <div class="card-skeleton" id="skel-7" style="display: none;"></div>
-              <img src="https://picsum.photos/seed/steam1/400/530" alt="Steampunk Airship" loading="lazy" style="opacity: 1;" onload="this.style.opacity=1;var s=document.getElementById('skel-7');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22&gt;&lt;rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/&gt;&lt;text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22&gt;No Image&lt;/text&gt;&lt;/svg&gt;';">
-              <div class="card-overlay">
-                <span class="card-model">Midjourney v6</span>
-                <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(`Massive steampunk airship docked at a Victorian sky port, brass gears and copper pipes, steam venting from engines, crew members in goggles and top hats, cloudy sunset sky, detailed mechanical components, cinematic wide angle`,this)">⧉ Copy Prompt</button>
-              </div>
-              </div>
-            <div class="card-info">
-  <h3 class="card-title" title="Steampunk Airship">Steampunk Airship</h3>
-  
-  <div class="card-tags"><span class="tag">#steampunk</span><span class="tag">#airship</span><span class="tag">#vintage</span></div>
-</div>
-          </div></div></div>
-      
-    <div class="pager-wrap">
-      <div class="pager" role="navigation" aria-label="Pagination">
-        <button class="pager-btn" onclick="gotoPage(1)" disabled="">首页</button>
-        <button class="pager-btn" onclick="gotoPage(0)" disabled="">上一页</button>
-        <button class="pager-page " onclick="gotoPage(2)">2</button><button class="pager-page active" onclick="gotoPage(1)">1</button>
-        <button class="pager-btn" onclick="gotoPage(2)">下一页</button>
-        <button class="pager-btn" onclick="gotoPage(2)">末页</button>
-        <span class="pager-sep">|</span>
-        <div class="pager-jump">
-          <input type="number" min="1" max="2" placeholder="页码" onkeydown="if(event.key==='Enter'){gotoPage(parseInt(this.value||'1',10));}">
-          <button class="pager-btn" onclick="gotoPage(parseInt(this.previousElementSibling.value||'1',10))">跳转</button>
-        </div>
-        <span class="pager-info">共 2 页 / 33 条</span>
-      </div>
-    </div>
-  
-    </section>
-
-    <footer class="footer">
-      <div class="footer-brand">ZrhAi</div>
-      <p>Free &amp; Open Source AI Prompt Library</p>
-      <div class="footer-links"><a href="#">GitHub</a><a href="#">About</a><a href="#">Contribute</a></div>
-    </footer>
-
-    <div id="modalBackdrop" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal()">
-      <div id="modalContent" class="modal-content" onclick="event.stopPropagation()"></div>
-    </div></div>
+<div class="page-front active" id="pageFront">
+<div class="app-wrapper" id="appFront"></div>
 </div>
 
 <!-- ════════════════════════════════ -->
 <!-- ADMIN PAGE                       -->
 <!-- ════════════════════════════════ -->
-<div class="page-admin active" id="pageAdmin">
+<div class="page-admin" id="pageAdmin">
 <div class="app-wrapper">
-<div class="admin-wrapper" id="appAdmin">
-    <div class="admin-header">
-      <div class="admin-header-left">
-        <button class="admin-back-btn" onclick="goTo('front')">← 返回前台</button>
-        <h1>⚙ <span>ZrhAi</span> 后台管理</h1>
-      </div>
-      <div class="admin-header-right">
-        <button class="admin-ghost-btn" onclick="openHomeConfig()">🏠 首页配置</button>
-        <button class="admin-ghost-btn" onclick="openInfoButtonsConfig()">⚙ 配置按钮</button>
-        <button class="admin-ghost-btn" onclick="exportPromptsJSON()">⬇ 导出 JSON</button>
-        <button class="admin-ghost-btn" onclick="exportFullHTML()">⬇ 导出 HTML</button>
-        <button class="admin-ghost-btn" onclick="triggerImportJSON()">⬆ 导入 JSON</button>
-        <button class="admin-add-btn" onclick="openEditModal(null)">＋ 新增提示词</button>
-      </div>
-    </div>
-
-    <div class="admin-stats">
-      <div class="admin-stat-card"><div class="num">33</div><div class="lbl">总提示词</div></div>
-      <div class="admin-stat-card"><div class="num">7</div><div class="lbl">动漫</div></div><div class="admin-stat-card"><div class="num">6</div><div class="lbl">写实</div></div><div class="admin-stat-card"><div class="num">8</div><div class="lbl">赛博朋克</div></div><div class="admin-stat-card"><div class="num">6</div><div class="lbl">奇幻</div></div><div class="admin-stat-card"><div class="num">6</div><div class="lbl">3D渲染</div></div>
-    </div>
-
-    <div class="admin-toolbar">
-      <input class="admin-search" type="text" placeholder="搜索 ID / 标题 / 标签..." value="" oncompositionstart="this._ime=1" oncompositionend="this._ime=0" oninput="if(this._ime)return;state.adminSearchDraft=this.value;" onkeydown="if(event.key==='Enter'){applyAdminSearch();}">
-      <button class="admin-confirm " onclick="applyAdminSearch()">Search</button>
-      <select class="admin-filter" onchange="state.adminFilter=this.value;renderAdmin()">
-        <option value="all" selected="">✦ 全部提示词</option><option value="anime">🌸 动漫</option><option value="realistic">📷 写实</option><option value="cyberpunk">🌃 赛博朋克</option><option value="fantasy">🐉 奇幻</option><option value="3d">💎 3D渲染</option>
-      </select>
-    </div>
-
-    <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead><tr>
-          <th>ID</th><th>预览</th><th>英文标题</th><th>中文标题</th><th>分类</th><th>模型</th><th>标签</th><th>提示词</th><th>操作</th>
-        </tr></thead>
-        <tbody>
-          <tr>
-              <td style="color:var(--text-muted);font-size:12px">30</td>
-              <td><img class="thumb" src="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="PostLine">PostLi...</td>
-              <td class="title-cell" title="我的世界花园">我的世界花园</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#apocalypse</span><span class="tag">#garden</span><span class="tag">#nature</span></div></td>
-              <td class="prompt-cell" title="Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere">Post-apoca...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(30)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(30)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">32</td>
-              <td><img class="thumb" src="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="测试导出1">测试导出1</td>
-              <td class="title-cell" title="261212">261212</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#测试1</span><span class="tag">#测试2</span><span class="tag">#测试3</span></div></td>
-              <td class="prompt-cell" title="测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿
-测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿
-测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿">测啊呃呃呃呃呃我饿测...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(32)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(32)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">31</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/cyber5/400/490" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Post-Apocalyptic Garden">Post-A...</td>
-              <td class="title-cell" title="末世花园">末世花园</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#apocalypse</span><span class="tag">#garden</span><span class="tag">#nature</span></div></td>
-              <td class="prompt-cell" title="Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere">Post-apoca...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(31)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(31)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">29</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d6/400/450" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Glass Morphism UI">Glass ...</td>
-              <td class="title-cell" title="玻璃拟态界面">玻璃拟态界面</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#glassmorphism</span><span class="tag">#ui</span><span class="tag">#modern</span></div></td>
-              <td class="prompt-cell" title="Glassmorphism UI design mockup floating in space, frosted glass cards with colorful gradient backgrounds, soft shadows, rounded corners, modern dashboard layout, iOS inspired, clean typography, light theme, 3D perspective, figma quality render">Glassmorph...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(29)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(29)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">28</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan6/400/600" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Enchanted Library">Enchan...</td>
-              <td class="title-cell" title="魔法图书馆">魔法图书馆</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#library</span><span class="tag">#magic</span><span class="tag">#books</span></div></td>
-              <td class="prompt-cell" title="Massive enchanted library with infinite bookshelves reaching into darkness above, floating glowing books, spiral staircases, warm candlelight, wizard studying at an ancient desk, magical dust motes in light beams, ultra wide angle">Massive en...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(28)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(28)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">27</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime6/400/400" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Pixel Art Dungeon">Pixel ...</td>
-              <td class="title-cell" title="像素地牢">像素地牢</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#pixel</span><span class="tag">#dungeon</span><span class="tag">#retro</span></div></td>
-              <td class="prompt-cell" title="16-bit pixel art RPG dungeon scene, treasure chest glowing in torchlight, skeleton enemies, hero character with sword and shield, stone walls with moss, mysterious doorway, retro gaming aesthetic, detailed sprite work, nostalgic color palette">16-bit pix...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(27)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(27)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">26</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real6/400/520" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Double Exposure Wolf">Double...</td>
-              <td class="title-cell" title="双重曝光狼">双重曝光狼</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#double-exposure</span><span class="tag">#wolf</span><span class="tag">#nature</span></div></td>
-              <td class="prompt-cell" title="Double exposure portrait of a wolf and pine forest, starry night sky visible through the silhouette, northern lights in green and purple, snow-capped mountains in the background, artistic photography, high contrast, moody atmosphere">Double exp...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(26)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(26)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">25</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d5/400/460" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Cute Robot Friend">Cute R...</td>
-              <td class="title-cell" title="可爱机器人朋友">可爱机器人朋...</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#robot</span><span class="tag">#cute</span><span class="tag">#character</span></div></td>
-              <td class="prompt-cell" title="Adorable small robot character with big expressive LED eyes, rounded white body with mint accents, tiny antenna, sitting on a park bench reading a book, autumn leaves falling, Pixar quality render, subsurface scattering, warm afternoon light">Adorable s...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(25)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(25)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">24</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan5/400/580" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Dragon Rider">Dragon...</td>
-              <td class="title-cell" title="驭龙骑士">驭龙骑士</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#dragon</span><span class="tag">#rider</span><span class="tag">#epic</span></div></td>
-              <td class="prompt-cell" title="Epic dragon rider soaring through storm clouds, massive red dragon with battle scars, rider in gleaming plate armor, lightning illuminating the scene, rain and wind effects, dramatic low angle perspective, fantasy book cover quality">Epic drago...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(24)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(24)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">23</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real5/400/500" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Architectural Interior">Archit...</td>
-              <td class="title-cell" title="建筑室内设计">建筑室内设计</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#interior</span><span class="tag">#architecture</span><span class="tag">#modern</span></div></td>
-              <td class="prompt-cell" title="Stunning modern interior design photography, double-height living room with floor-to-ceiling windows, minimalist Japandi aesthetic, concrete and warm wood, single statement art piece, natural light flooding in, Leica Q3 wide angle">Stunning m...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(23)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(23)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">22</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime5/400/380" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Studio Ghibli Meadow">Studio...</td>
-              <td class="title-cell" title="吉卜力草原">吉卜力草原</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#ghibli</span><span class="tag">#meadow</span><span class="tag">#peaceful</span></div></td>
-              <td class="prompt-cell" title="Studio Ghibli inspired landscape, vast green meadow with wildflowers swaying in gentle breeze, cumulus clouds casting soft shadows, small cottage in the distance, girl with straw hat walking on path, nostalgic summer day, painterly style">Studio Ghi...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(22)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(22)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">21</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/cyber4/400/540" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Cyberpunk Market">Cyberp...</td>
-              <td class="title-cell" title="赛博朋克市场">赛博朋克市场</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#market</span><span class="tag">#night</span><span class="tag">#urban</span></div></td>
-              <td class="prompt-cell" title="Bustling cyberpunk night market in a neon-soaked alley, holographic food stall signs in Chinese and Japanese, augmented reality price tags floating in air, diverse crowd with cybernetic implants, steam from street food, puddles reflecting everything">Bustling c...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(21)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(21)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">20</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d4/400/500" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Abstract Fluid Art">Abstra...</td>
-              <td class="title-cell" title="抽象流体艺术">抽象流体艺术</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#abstract</span><span class="tag">#fluid</span><span class="tag">#colorful</span></div></td>
-              <td class="prompt-cell" title="Abstract fluid art simulation, swirling metallic gold and deep ocean blue liquids, iridescent surface tension, macro photography style, satisfying ASMR aesthetic, high viscosity, studio lighting on dark background, 8k resolution, cinema 4D + Octane">Abstract f...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(20)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(20)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">19</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan4/400/350" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Floating Islands">Floati...</td>
-              <td class="title-cell" title="浮空岛屿">浮空岛屿</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#floating</span><span class="tag">#island</span><span class="tag">#adventure</span></div></td>
-              <td class="prompt-cell" title="Breathtaking floating islands connected by rope bridges, waterfalls pouring into clouds below, lush green vegetation, small village with thatched roofs, airships passing between islands, golden hour lighting, adventure game concept art, panoramic view">Breathtaki...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(19)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(19)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">18</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real4/400/400" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Food Photography Ramen">Food P...</td>
-              <td class="title-cell" title="拉面美食摄影">拉面美食摄影</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#food</span><span class="tag">#ramen</span><span class="tag">#japanese</span></div></td>
-              <td class="prompt-cell" title="Award-winning food photography of a steaming bowl of tonkotsu ramen, perfectly placed chashu pork slices, soft-boiled egg halved showing golden yolk, green onions, nori, steam rising, dark moody background, overhead angle, Nikon Z9, 50mm">Award-winn...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(18)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(18)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">17</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime4/400/420" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Chibi Witch">Chibi ...</td>
-              <td class="title-cell" title="Q版小女巫">Q版小女巫</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#chibi</span><span class="tag">#witch</span><span class="tag">#cute</span></div></td>
-              <td class="prompt-cell" title="Adorable chibi witch character, oversized pointy hat with stars, holding a glowing potion bottle, black cat familiar, sitting on a stack of spell books, sparkles and magical particles, pastel background, kawaii art style, clean line art">Adorable c...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(17)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(17)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">16</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/cyber3/400/440" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Vaporwave City">Vaporw...</td>
-              <td class="title-cell" title="蒸汽波城市">蒸汽波城市</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#vaporwave</span><span class="tag">#retro</span><span class="tag">#aesthetic</span></div></td>
-              <td class="prompt-cell" title="Vaporwave aesthetic cityscape, pink and cyan neon grid floor, floating Greek statues, palm trees with gradient colors, retro sun setting behind skyscrapers, VHS scan lines, chromatic aberration, 80s retrofuturism, synthwave mood">Vaporwave ...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(16)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(16)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">15</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan3/400/620" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Dark Elf Sorceress">Dark E...</td>
-              <td class="title-cell" title="暗精灵女巫">暗精灵女巫</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#elf</span><span class="tag">#magic</span><span class="tag">#dark</span></div></td>
-              <td class="prompt-cell" title="Dark elf sorceress casting a spell, purple energy swirling around hands, silver hair flowing in magical wind, intricate dark armor with glowing runes, ancient forest background with fireflies, dramatic backlighting, fantasy character design, detailed face">Dark elf s...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(15)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(15)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">14</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d3/400/350" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Low Poly Mountain">Low Po...</td>
-              <td class="title-cell" title="低多边形山脉">低多边形山脉</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#lowpoly</span><span class="tag">#mountain</span><span class="tag">#landscape</span></div></td>
-              <td class="prompt-cell" title="Low poly geometric mountain landscape, triangular facets in gradient sunset colors, mirror lake reflection, pine trees as simple shapes, deer silhouette, minimal clouds, stylized art, cinema 4D render, warm orange to purple palette">Low poly g...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(14)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(14)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">13</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real3/400/500" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Product Shot Perfume">Produc...</td>
-              <td class="title-cell" title="香水产品摄影">香水产品摄影</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#product</span><span class="tag">#perfume</span><span class="tag">#luxury</span></div></td>
-              <td class="prompt-cell" title="Luxury perfume bottle product photography, crystal clear glass with amber liquid, dramatic rim lighting, floating water droplets frozen in time, dark marble surface, reflection, commercial advertising quality, Phase One IQ4, 120mm macro">Luxury per...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(13)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(13)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">12</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime3/400/450" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Sakura Festival">Sakura...</td>
-              <td class="title-cell" title="樱花祭">樱花祭</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#sakura</span><span class="tag">#festival</span><span class="tag">#spring</span></div></td>
-              <td class="prompt-cell" title="Anime illustration of a traditional Japanese spring festival, cherry blossoms in full bloom, lanterns hanging between trees, characters in colorful yukata, food stalls with warm light, evening sky gradient, detailed background art, Makoto Shinkai style colors">Anime illu...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(12)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(12)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">11</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/cyber2/400/580" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Mech Warrior">Mech W...</td>
-              <td class="title-cell" title="机甲战士">机甲战士</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#mech</span><span class="tag">#robot</span><span class="tag">#battle</span></div></td>
-              <td class="prompt-cell" title="Giant mech warrior standing in a destroyed cityscape, battle damage and sparks, pilot visible through cracked cockpit glass, missile pods and energy weapons, dramatic smoke and fire, military sci-fi, Titanfall inspired, epic scale, dynamic pose">Giant mech...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(11)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(11)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">10</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real2/400/570" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Street Photography Tokyo">Street...</td>
-              <td class="title-cell" title="东京街头摄影">东京街头摄影</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#street</span><span class="tag">#tokyo</span><span class="tag">#night</span></div></td>
-              <td class="prompt-cell" title="Cinematic street photography in Shinjuku Tokyo at night, neon signs reflecting on wet pavement, lone figure with umbrella, shallow depth of field, Fujifilm X-T5, 23mm f/1.4, film grain, moody atmosphere, Blade Runner vibes">Cinematic ...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(10)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(10)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">9</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d2/400/400" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Isometric Room">Isomet...</td>
-              <td class="title-cell" title="等距小房间">等距小房间</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#isometric</span><span class="tag">#room</span><span class="tag">#cute</span></div></td>
-              <td class="prompt-cell" title="Isometric 3D render of a cozy artist studio room, warm lighting, miniature furniture, paint supplies on wooden desk, cat sleeping on cushion, plants on windowsill, soft shadows, pastel color palette, tilt-shift effect, blender render">Isometric ...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(9)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(9)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">8</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan2/400/600" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Underwater Temple">Underw...</td>
-              <td class="title-cell" title="水下神殿">水下神殿</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#underwater</span><span class="tag">#temple</span><span class="tag">#ancient</span></div></td>
-              <td class="prompt-cell" title="Ancient underwater temple with bioluminescent coral growing on columns, schools of exotic fish, sunlight rays penetrating the ocean surface, mosaic floors with golden patterns, mysterious glowing runes, photorealistic, volumetric lighting">Ancient un...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(8)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(8)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">7</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/steam1/400/530" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Steampunk Airship">Steamp...</td>
-              <td class="title-cell" title="蒸汽朋克飞艇">蒸汽朋克飞艇</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#steampunk</span><span class="tag">#airship</span><span class="tag">#vintage</span></div></td>
-              <td class="prompt-cell" title="Massive steampunk airship docked at a Victorian sky port, brass gears and copper pipes, steam venting from engines, crew members in goggles and top hats, cloudy sunset sky, detailed mechanical components, cinematic wide angle">Massive st...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(7)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(7)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">6</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime2/400/400" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Neon Cat Lofi">Neon C...</td>
-              <td class="title-cell" title="霓虹猫Lofi">霓虹猫Lof...</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#cat</span><span class="tag">#lofi</span><span class="tag">#neon</span></div></td>
-              <td class="prompt-cell" title="Cute anime cat wearing headphones sitting at a desk with a laptop, lo-fi aesthetic, neon purple and pink lighting, rainy window background, pixel art elements, cozy room with plants, warm atmosphere, kawaii style">Cute anime...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(6)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(6)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">5</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/fan1/400/520" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Fantasy Castle Clouds">Fantas...</td>
-              <td class="title-cell" title="云端幻想城堡">云端幻想城堡</td>
-              <td><span class="cat-badge cat-fantasy">fantasy</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#castle</span><span class="tag">#clouds</span><span class="tag">#magical</span></div></td>
-              <td class="prompt-cell" title="A grand fantasy castle floating among golden clouds at sunset, waterfalls cascading into the void below, flying dragons in the distance, magical aurora in the sky, intricate Gothic architecture, matte painting style, epic composition">A grand fa...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(5)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(5)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">4</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/real1/400/550" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Realistic Portrait Lady">Realis...</td>
-              <td class="title-cell" title="写实肖像女士">写实肖像女士</td>
-              <td><span class="cat-badge cat-realistic">realistic</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#portrait</span><span class="tag">#woman</span><span class="tag">#photography</span></div></td>
-              <td class="prompt-cell" title="Professional portrait photography of a 30-year-old woman with freckles, natural red hair, golden hour sunlight through window, shallow depth of field, Canon EOS R5, 85mm f/1.4, warm tones, magazine quality">Profession...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(4)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(4)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">3</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/3d1/400/480" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="3D Crystal Dragon">3D Cry...</td>
-              <td class="title-cell" title="3D水晶龙">3D水晶龙</td>
-              <td><span class="cat-badge cat-3d">3d</span></td>
-              <td style="font-size:12px;white-space:nowrap">Nanobanana Pro</td>
-              <td><div class="card-tags"><span class="tag">#dragon</span><span class="tag">#crystal</span><span class="tag">#render</span></div></td>
-              <td class="prompt-cell" title="3D render of a magnificent crystal dragon, transparent body refracting rainbow light, perched on an obsidian rock, volumetric fog, caustic light effects, octane render, hyper detailed, studio lighting, 4k">3D render ...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(3)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(3)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">2</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/anime1/400/500" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Anime Girl in Rain">Anime ...</td>
-              <td class="title-cell" title="雨中动漫少女">雨中动漫少女</td>
-              <td><span class="cat-badge cat-anime">anime</span></td>
-              <td style="font-size:12px;white-space:nowrap">Stable Diffusion</td>
-              <td><div class="card-tags"><span class="tag">#rain</span><span class="tag">#girl</span><span class="tag">#emotional</span></div></td>
-              <td class="prompt-cell" title="Beautiful anime girl standing under a cherry blossom tree in the rain, transparent umbrella, soft pink petals falling, school uniform, melancholic expression, Studio Ghibli style, watercolor background, ethereal lighting">Beautiful ...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(2)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(2)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">1</td>
-              <td><img class="thumb" src="https://picsum.photos/seed/cyber1b/400/560" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Cyberpunk Samurai">Cyberp...</td>
-              <td class="title-cell" title="赛博朋克11武士">赛博朋克11...</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#neon</span><span class="tag">#warrior</span><span class="tag">#futuristic</span></div></td>
-              <td class="prompt-cell" title="A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k">A cyberpun...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(1)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(1)">✕ 删除</button>
-              </div></td>
-            </tr><tr>
-              <td style="color:var(--text-muted);font-size:12px">0</td>
-              <td><img class="thumb" src="assets/img/a.jpg" onerror="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22&gt;&lt;rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/&gt;&lt;/svg&gt;'"></td>
-              <td class="title-cell" title="Cyberpunk Samurai">Cyberp...</td>
-              <td class="title-cell" title="zrh测试1">zrh测试1</td>
-              <td><span class="cat-badge cat-cyberpunk">cyberpunk</span></td>
-              <td style="font-size:12px;white-space:nowrap">Midjourney v6</td>
-              <td><div class="card-tags"><span class="tag">#neon</span><span class="tag">#warrior</span><span class="tag">#futuristic</span></div></td>
-              <td class="prompt-cell" title="A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k">A cyberpun...</td>
-              <td><div class="admin-actions">
-                <button class="btn-edit" onclick="openEditModal(0)">✎ 编辑</button>
-                <button class="btn-delete" onclick="deletePrompt(0)">✕ 删除</button>
-              </div></td>
-            </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-<input id="importJsonInput" type="file" accept="application/json,.json" style="display:none" onchange="onImportJSONFile(this.files &amp;&amp; this.files[0]); this.value=''">
+<div class="admin-wrapper" id="appAdmin"></div>
+<input id="importJsonInput" type="file" accept="application/json,.json" style="display:none" onchange="onImportJSONFile(this.files && this.files[0]); this.value=''">
 </div>
 <!-- Edit Modal -->
 <div class="edit-modal-backdrop hidden" id="editModalBackdrop" onclick="if(event.target===this)closeEditModal()">
-  <div class="edit-modal" id="editModalContent">
-    <h2>✎ 编辑提示词 <span class="badge">ID: 30</span></h2>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>英文标题 Title</label>
-        <input type="text" id="edit_title" value="PostLine" placeholder="Cyberpunk Samurai">
-      </div>
-      <div class="form-group">
-        <label>中文标题 TitleZh</label>
-        <input type="text" id="edit_titleZh" value="我的世界花园" placeholder="赛博朋克武士">
-      </div>
-      <div class="form-group">
-        <label>分类 Category</label>
-        <select id="edit_category">
-          <option value="anime">🌸 动漫 (anime)</option><option value="realistic">📷 写实 (realistic)</option><option value="cyberpunk" selected="">🌃 赛博朋克 (cyberpunk)</option><option value="fantasy">🐉 奇幻 (fantasy)</option><option value="3d">💎 3D渲染 (3d)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>模型 Model</label>
-        <select id="edit_model">
-          <option value="Midjourney v6" selected="">Midjourney v6</option><option value="Stable Diffusion">Stable Diffusion</option><option value="Nanobanana Pro">Nanobanana Pro</option><option value="Flux-kontext">Flux-kontext</option><option value="DALL-E 3">DALL-E 3</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label>标签 Tags <span class="help">（用英文逗号分隔，如: neon, warrior, futuristic）</span></label>
-        <input type="text" id="edit_tags" value="apocalypse, garden, nature, an2tu, natur" placeholder="neon, warrior, futuristic">
-      </div>
-      <div class="form-group full">
-        <label>图片链接 Image URL <span class="help">（支持多图片：用英文逗号或换行分隔）</span></label>
-        <input type="text" id="edit_image" value="assets/img/a.jpg" placeholder="https://.../a.jpg, https://.../b.jpg" oninput="updatePreview()">
-      </div>
-      <div class="form-group full">
-        <label>作品展示按钮 Showcase Buttons <span class="help">（可选：支持多个按钮，可自定义名称与跳转链接）</span></label>
-        <div class="btnlist" id="edit_showcase_list"></div>
-        <button class="btn-small" type="button" onclick="addShowcaseBtnRow('', '')">＋ 添加按钮</button>
-        <div class="help" style="margin-top:8px;color:var(--text-muted);font-size:12px">提示：你也可以把作品链接做成多个入口，比如“作品页 / 原文 / 下载 / 购买”等。</div>
-      </div>
-      <div class="form-group full">
-        <label>英文口令 Prompt (EN)</label>
-        <textarea id="edit_promptEn" rows="4" maxlength="10000" placeholder="English prompt...">Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere</textarea>
-      </div>
-      <div class="form-group full">
-        <label>中文口令 Prompt (ZH)</label>
-        <textarea id="edit_promptZh" rows="4" maxlength="10000" placeholder="中文提示词...">Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere</textarea>
-      </div>
-    </div>
-    <div class="form-preview" id="editPreview">
-    <div class="form-preview-title">图片预览 <span class="help" style="margin-left:8px">（1 张）</span></div>
-    <div class="thumb-strip">
-      
-        <div class="thumb-item"><span style="color:var(--danger);font-size:12px">加载失败</span></div>
-      
-    </div>
-  </div>
-    <div class="form-buttons">
-      <button class="btn-cancel" onclick="closeEditModal()">取消</button>
-      <button class="btn-save" onclick="saveEdit()">💾 保存修改</button>
-    </div>
-  </div>
+  <div class="edit-modal" id="editModalContent"></div>
 </div>
 </div>
 
@@ -1595,10 +565,10 @@ body { font-family:var(--font-main); background:var(--bg-primary); color:var(--t
 <div class="modal-backdrop hidden" id="infoBackdrop" onclick="if(event.target===this)closeInfoModal()">
   <div class="info-modal" onclick="event.stopPropagation()">
     <div class="info-modal-header">
-      <div class="info-modal-title" id="infoTitle">微信</div>
+      <div class="info-modal-title" id="infoTitle">Info</div>
       <button class="modal-close" onclick="closeInfoModal()">✕</button>
     </div>
-    <div class="info-modal-body" id="infoBody"><div class="info-img-wrap"><img src="assets/img/weixin.jpg" alt="image"></div></div>
+    <div class="info-modal-body" id="infoBody"></div>
   </div>
 </div>
 
@@ -1622,589 +592,26 @@ body { font-family:var(--font-main); background:var(--bg-primary); color:var(--t
 // ═══════════════════════════════════════════
 
 // ── Default Prompt Data ──
-const EMBEDDED_VERSION = 1772274250521;
+const EMBEDDED_VERSION = 1772242169450;
 const DEFAULT_PROMPTS = [
-  {
-    "id": 0,
-    "title": "Cyberpunk Samurai",
-    "titleZh": "zrh测试1",
-    "category": "cyberpunk",
-    "tags": [
-      "neon",
-      "warrior",
-      "futuristic"
-    ],
-    "prompt": "A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k",
-    "image": "assets/img/a.jpg",
-    "model": "Midjourney v6",
-    "promptEn": "A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k",
-    "promptZh": ""
-  },
-  {
-    "id": 1,
-    "title": "Cyberpunk Samurai",
-    "titleZh": "赛博朋克11武士",
-    "category": "cyberpunk",
-    "tags": [
-      "neon",
-      "warrior",
-      "futuristic"
-    ],
-    "prompt": "A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k",
-    "image": "https://picsum.photos/seed/cyber1b/400/560",
-    "model": "Midjourney v6",
-    "promptEn": "A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k",
-    "promptZh": ""
-  },
-  {
-    "id": 2,
-    "title": "Anime Girl in Rain",
-    "titleZh": "雨中动漫少女",
-    "category": "anime",
-    "tags": [
-      "rain",
-      "girl",
-      "emotional"
-    ],
-    "prompt": "Beautiful anime girl standing under a cherry blossom tree in the rain, transparent umbrella, soft pink petals falling, school uniform, melancholic expression, Studio Ghibli style, watercolor background, ethereal lighting",
-    "image": "https://picsum.photos/seed/anime1/400/500",
-    "model": "Stable Diffusion",
-    "promptEn": "Beautiful anime girl standing under a cherry blossom tree in the rain, transparent umbrella, soft pink petals falling, school uniform, melancholic expression, Studio Ghibli style, watercolor background, ethereal lighting",
-    "promptZh": ""
-  },
-  {
-    "id": 3,
-    "title": "3D Crystal Dragon",
-    "titleZh": "3D水晶龙",
-    "category": "3d",
-    "tags": [
-      "dragon",
-      "crystal",
-      "render"
-    ],
-    "prompt": "3D render of a magnificent crystal dragon, transparent body refracting rainbow light, perched on an obsidian rock, volumetric fog, caustic light effects, octane render, hyper detailed, studio lighting, 4k",
-    "image": "https://picsum.photos/seed/3d1/400/480",
-    "model": "Nanobanana Pro",
-    "promptEn": "3D render of a magnificent crystal dragon, transparent body refracting rainbow light, perched on an obsidian rock, volumetric fog, caustic light effects, octane render, hyper detailed, studio lighting, 4k",
-    "promptZh": ""
-  },
-  {
-    "id": 4,
-    "title": "Realistic Portrait Lady",
-    "titleZh": "写实肖像女士",
-    "category": "realistic",
-    "tags": [
-      "portrait",
-      "woman",
-      "photography"
-    ],
-    "prompt": "Professional portrait photography of a 30-year-old woman with freckles, natural red hair, golden hour sunlight through window, shallow depth of field, Canon EOS R5, 85mm f/1.4, warm tones, magazine quality",
-    "image": "https://picsum.photos/seed/real1/400/550",
-    "model": "Midjourney v6",
-    "promptEn": "Professional portrait photography of a 30-year-old woman with freckles, natural red hair, golden hour sunlight through window, shallow depth of field, Canon EOS R5, 85mm f/1.4, warm tones, magazine quality",
-    "promptZh": ""
-  },
-  {
-    "id": 5,
-    "title": "Fantasy Castle Clouds",
-    "titleZh": "云端幻想城堡",
-    "category": "fantasy",
-    "tags": [
-      "castle",
-      "clouds",
-      "magical"
-    ],
-    "prompt": "A grand fantasy castle floating among golden clouds at sunset, waterfalls cascading into the void below, flying dragons in the distance, magical aurora in the sky, intricate Gothic architecture, matte painting style, epic composition",
-    "image": "https://picsum.photos/seed/fan1/400/520",
-    "model": "Stable Diffusion",
-    "promptEn": "A grand fantasy castle floating among golden clouds at sunset, waterfalls cascading into the void below, flying dragons in the distance, magical aurora in the sky, intricate Gothic architecture, matte painting style, epic composition",
-    "promptZh": ""
-  },
-  {
-    "id": 6,
-    "title": "Neon Cat Lofi",
-    "titleZh": "霓虹猫Lofi",
-    "category": "anime",
-    "tags": [
-      "cat",
-      "lofi",
-      "neon"
-    ],
-    "prompt": "Cute anime cat wearing headphones sitting at a desk with a laptop, lo-fi aesthetic, neon purple and pink lighting, rainy window background, pixel art elements, cozy room with plants, warm atmosphere, kawaii style",
-    "image": "https://picsum.photos/seed/anime2/400/400",
-    "model": "Nanobanana Pro",
-    "promptEn": "Cute anime cat wearing headphones sitting at a desk with a laptop, lo-fi aesthetic, neon purple and pink lighting, rainy window background, pixel art elements, cozy room with plants, warm atmosphere, kawaii style",
-    "promptZh": ""
-  },
-  {
-    "id": 7,
-    "title": "Steampunk Airship",
-    "titleZh": "蒸汽朋克飞艇",
-    "category": "cyberpunk",
-    "tags": [
-      "steampunk",
-      "airship",
-      "vintage"
-    ],
-    "prompt": "Massive steampunk airship docked at a Victorian sky port, brass gears and copper pipes, steam venting from engines, crew members in goggles and top hats, cloudy sunset sky, detailed mechanical components, cinematic wide angle",
-    "image": "https://picsum.photos/seed/steam1/400/530",
-    "model": "Midjourney v6",
-    "promptEn": "Massive steampunk airship docked at a Victorian sky port, brass gears and copper pipes, steam venting from engines, crew members in goggles and top hats, cloudy sunset sky, detailed mechanical components, cinematic wide angle",
-    "promptZh": ""
-  },
-  {
-    "id": 8,
-    "title": "Underwater Temple",
-    "titleZh": "水下神殿",
-    "category": "fantasy",
-    "tags": [
-      "underwater",
-      "temple",
-      "ancient"
-    ],
-    "prompt": "Ancient underwater temple with bioluminescent coral growing on columns, schools of exotic fish, sunlight rays penetrating the ocean surface, mosaic floors with golden patterns, mysterious glowing runes, photorealistic, volumetric lighting",
-    "image": "https://picsum.photos/seed/fan2/400/600",
-    "model": "Stable Diffusion",
-    "promptEn": "Ancient underwater temple with bioluminescent coral growing on columns, schools of exotic fish, sunlight rays penetrating the ocean surface, mosaic floors with golden patterns, mysterious glowing runes, photorealistic, volumetric lighting",
-    "promptZh": ""
-  },
-  {
-    "id": 9,
-    "title": "Isometric Room",
-    "titleZh": "等距小房间",
-    "category": "3d",
-    "tags": [
-      "isometric",
-      "room",
-      "cute"
-    ],
-    "prompt": "Isometric 3D render of a cozy artist studio room, warm lighting, miniature furniture, paint supplies on wooden desk, cat sleeping on cushion, plants on windowsill, soft shadows, pastel color palette, tilt-shift effect, blender render",
-    "image": "https://picsum.photos/seed/3d2/400/400",
-    "model": "Nanobanana Pro",
-    "promptEn": "Isometric 3D render of a cozy artist studio room, warm lighting, miniature furniture, paint supplies on wooden desk, cat sleeping on cushion, plants on windowsill, soft shadows, pastel color palette, tilt-shift effect, blender render",
-    "promptZh": ""
-  },
-  {
-    "id": 10,
-    "title": "Street Photography Tokyo",
-    "titleZh": "东京街头摄影",
-    "category": "realistic",
-    "tags": [
-      "street",
-      "tokyo",
-      "night"
-    ],
-    "prompt": "Cinematic street photography in Shinjuku Tokyo at night, neon signs reflecting on wet pavement, lone figure with umbrella, shallow depth of field, Fujifilm X-T5, 23mm f/1.4, film grain, moody atmosphere, Blade Runner vibes",
-    "image": "https://picsum.photos/seed/real2/400/570",
-    "model": "Midjourney v6",
-    "promptEn": "Cinematic street photography in Shinjuku Tokyo at night, neon signs reflecting on wet pavement, lone figure with umbrella, shallow depth of field, Fujifilm X-T5, 23mm f/1.4, film grain, moody atmosphere, Blade Runner vibes",
-    "promptZh": ""
-  },
-  {
-    "id": 11,
-    "title": "Mech Warrior",
-    "titleZh": "机甲战士",
-    "category": "cyberpunk",
-    "tags": [
-      "mech",
-      "robot",
-      "battle"
-    ],
-    "prompt": "Giant mech warrior standing in a destroyed cityscape, battle damage and sparks, pilot visible through cracked cockpit glass, missile pods and energy weapons, dramatic smoke and fire, military sci-fi, Titanfall inspired, epic scale, dynamic pose",
-    "image": "https://picsum.photos/seed/cyber2/400/580",
-    "model": "Stable Diffusion",
-    "promptEn": "Giant mech warrior standing in a destroyed cityscape, battle damage and sparks, pilot visible through cracked cockpit glass, missile pods and energy weapons, dramatic smoke and fire, military sci-fi, Titanfall inspired, epic scale, dynamic pose",
-    "promptZh": ""
-  },
-  {
-    "id": 12,
-    "title": "Sakura Festival",
-    "titleZh": "樱花祭",
-    "category": "anime",
-    "tags": [
-      "sakura",
-      "festival",
-      "spring"
-    ],
-    "prompt": "Anime illustration of a traditional Japanese spring festival, cherry blossoms in full bloom, lanterns hanging between trees, characters in colorful yukata, food stalls with warm light, evening sky gradient, detailed background art, Makoto Shinkai style colors",
-    "image": "https://picsum.photos/seed/anime3/400/450",
-    "model": "Nanobanana Pro",
-    "promptEn": "Anime illustration of a traditional Japanese spring festival, cherry blossoms in full bloom, lanterns hanging between trees, characters in colorful yukata, food stalls with warm light, evening sky gradient, detailed background art, Makoto Shinkai style colors",
-    "promptZh": ""
-  },
-  {
-    "id": 13,
-    "title": "Product Shot Perfume",
-    "titleZh": "香水产品摄影",
-    "category": "realistic",
-    "tags": [
-      "product",
-      "perfume",
-      "luxury"
-    ],
-    "prompt": "Luxury perfume bottle product photography, crystal clear glass with amber liquid, dramatic rim lighting, floating water droplets frozen in time, dark marble surface, reflection, commercial advertising quality, Phase One IQ4, 120mm macro",
-    "image": "https://picsum.photos/seed/real3/400/500",
-    "model": "Midjourney v6",
-    "promptEn": "Luxury perfume bottle product photography, crystal clear glass with amber liquid, dramatic rim lighting, floating water droplets frozen in time, dark marble surface, reflection, commercial advertising quality, Phase One IQ4, 120mm macro",
-    "promptZh": ""
-  },
-  {
-    "id": 14,
-    "title": "Low Poly Mountain",
-    "titleZh": "低多边形山脉",
-    "category": "3d",
-    "tags": [
-      "lowpoly",
-      "mountain",
-      "landscape"
-    ],
-    "prompt": "Low poly geometric mountain landscape, triangular facets in gradient sunset colors, mirror lake reflection, pine trees as simple shapes, deer silhouette, minimal clouds, stylized art, cinema 4D render, warm orange to purple palette",
-    "image": "https://picsum.photos/seed/3d3/400/350",
-    "model": "Stable Diffusion",
-    "promptEn": "Low poly geometric mountain landscape, triangular facets in gradient sunset colors, mirror lake reflection, pine trees as simple shapes, deer silhouette, minimal clouds, stylized art, cinema 4D render, warm orange to purple palette",
-    "promptZh": ""
-  },
-  {
-    "id": 15,
-    "title": "Dark Elf Sorceress",
-    "titleZh": "暗精灵女巫",
-    "category": "fantasy",
-    "tags": [
-      "elf",
-      "magic",
-      "dark"
-    ],
-    "prompt": "Dark elf sorceress casting a spell, purple energy swirling around hands, silver hair flowing in magical wind, intricate dark armor with glowing runes, ancient forest background with fireflies, dramatic backlighting, fantasy character design, detailed face",
-    "image": "https://picsum.photos/seed/fan3/400/620",
-    "model": "Midjourney v6",
-    "promptEn": "Dark elf sorceress casting a spell, purple energy swirling around hands, silver hair flowing in magical wind, intricate dark armor with glowing runes, ancient forest background with fireflies, dramatic backlighting, fantasy character design, detailed face",
-    "promptZh": ""
-  },
-  {
-    "id": 16,
-    "title": "Vaporwave City",
-    "titleZh": "蒸汽波城市",
-    "category": "cyberpunk",
-    "tags": [
-      "vaporwave",
-      "retro",
-      "aesthetic"
-    ],
-    "prompt": "Vaporwave aesthetic cityscape, pink and cyan neon grid floor, floating Greek statues, palm trees with gradient colors, retro sun setting behind skyscrapers, VHS scan lines, chromatic aberration, 80s retrofuturism, synthwave mood",
-    "image": "https://picsum.photos/seed/cyber3/400/440",
-    "model": "Nanobanana Pro",
-    "promptEn": "Vaporwave aesthetic cityscape, pink and cyan neon grid floor, floating Greek statues, palm trees with gradient colors, retro sun setting behind skyscrapers, VHS scan lines, chromatic aberration, 80s retrofuturism, synthwave mood",
-    "promptZh": ""
-  },
-  {
-    "id": 17,
-    "title": "Chibi Witch",
-    "titleZh": "Q版小女巫",
-    "category": "anime",
-    "tags": [
-      "chibi",
-      "witch",
-      "cute"
-    ],
-    "prompt": "Adorable chibi witch character, oversized pointy hat with stars, holding a glowing potion bottle, black cat familiar, sitting on a stack of spell books, sparkles and magical particles, pastel background, kawaii art style, clean line art",
-    "image": "https://picsum.photos/seed/anime4/400/420",
-    "model": "Stable Diffusion",
-    "promptEn": "Adorable chibi witch character, oversized pointy hat with stars, holding a glowing potion bottle, black cat familiar, sitting on a stack of spell books, sparkles and magical particles, pastel background, kawaii art style, clean line art",
-    "promptZh": ""
-  },
-  {
-    "id": 18,
-    "title": "Food Photography Ramen",
-    "titleZh": "拉面美食摄影",
-    "category": "realistic",
-    "tags": [
-      "food",
-      "ramen",
-      "japanese"
-    ],
-    "prompt": "Award-winning food photography of a steaming bowl of tonkotsu ramen, perfectly placed chashu pork slices, soft-boiled egg halved showing golden yolk, green onions, nori, steam rising, dark moody background, overhead angle, Nikon Z9, 50mm",
-    "image": "https://picsum.photos/seed/real4/400/400",
-    "model": "Midjourney v6",
-    "promptEn": "Award-winning food photography of a steaming bowl of tonkotsu ramen, perfectly placed chashu pork slices, soft-boiled egg halved showing golden yolk, green onions, nori, steam rising, dark moody background, overhead angle, Nikon Z9, 50mm",
-    "promptZh": ""
-  },
-  {
-    "id": 19,
-    "title": "Floating Islands",
-    "titleZh": "浮空岛屿",
-    "category": "fantasy",
-    "tags": [
-      "floating",
-      "island",
-      "adventure"
-    ],
-    "prompt": "Breathtaking floating islands connected by rope bridges, waterfalls pouring into clouds below, lush green vegetation, small village with thatched roofs, airships passing between islands, golden hour lighting, adventure game concept art, panoramic view",
-    "image": "https://picsum.photos/seed/fan4/400/350",
-    "model": "Stable Diffusion",
-    "promptEn": "Breathtaking floating islands connected by rope bridges, waterfalls pouring into clouds below, lush green vegetation, small village with thatched roofs, airships passing between islands, golden hour lighting, adventure game concept art, panoramic view",
-    "promptZh": ""
-  },
-  {
-    "id": 20,
-    "title": "Abstract Fluid Art",
-    "titleZh": "抽象流体艺术",
-    "category": "3d",
-    "tags": [
-      "abstract",
-      "fluid",
-      "colorful"
-    ],
-    "prompt": "Abstract fluid art simulation, swirling metallic gold and deep ocean blue liquids, iridescent surface tension, macro photography style, satisfying ASMR aesthetic, high viscosity, studio lighting on dark background, 8k resolution, cinema 4D + Octane",
-    "image": "https://picsum.photos/seed/3d4/400/500",
-    "model": "Nanobanana Pro",
-    "promptEn": "Abstract fluid art simulation, swirling metallic gold and deep ocean blue liquids, iridescent surface tension, macro photography style, satisfying ASMR aesthetic, high viscosity, studio lighting on dark background, 8k resolution, cinema 4D + Octane",
-    "promptZh": ""
-  },
-  {
-    "id": 21,
-    "title": "Cyberpunk Market",
-    "titleZh": "赛博朋克市场",
-    "category": "cyberpunk",
-    "tags": [
-      "market",
-      "night",
-      "urban"
-    ],
-    "prompt": "Bustling cyberpunk night market in a neon-soaked alley, holographic food stall signs in Chinese and Japanese, augmented reality price tags floating in air, diverse crowd with cybernetic implants, steam from street food, puddles reflecting everything",
-    "image": "https://picsum.photos/seed/cyber4/400/540",
-    "model": "Midjourney v6",
-    "promptEn": "Bustling cyberpunk night market in a neon-soaked alley, holographic food stall signs in Chinese and Japanese, augmented reality price tags floating in air, diverse crowd with cybernetic implants, steam from street food, puddles reflecting everything",
-    "promptZh": ""
-  },
-  {
-    "id": 22,
-    "title": "Studio Ghibli Meadow",
-    "titleZh": "吉卜力草原",
-    "category": "anime",
-    "tags": [
-      "ghibli",
-      "meadow",
-      "peaceful"
-    ],
-    "prompt": "Studio Ghibli inspired landscape, vast green meadow with wildflowers swaying in gentle breeze, cumulus clouds casting soft shadows, small cottage in the distance, girl with straw hat walking on path, nostalgic summer day, painterly style",
-    "image": "https://picsum.photos/seed/anime5/400/380",
-    "model": "Stable Diffusion",
-    "promptEn": "Studio Ghibli inspired landscape, vast green meadow with wildflowers swaying in gentle breeze, cumulus clouds casting soft shadows, small cottage in the distance, girl with straw hat walking on path, nostalgic summer day, painterly style",
-    "promptZh": ""
-  },
-  {
-    "id": 23,
-    "title": "Architectural Interior",
-    "titleZh": "建筑室内设计",
-    "category": "realistic",
-    "tags": [
-      "interior",
-      "architecture",
-      "modern"
-    ],
-    "prompt": "Stunning modern interior design photography, double-height living room with floor-to-ceiling windows, minimalist Japandi aesthetic, concrete and warm wood, single statement art piece, natural light flooding in, Leica Q3 wide angle",
-    "image": "https://picsum.photos/seed/real5/400/500",
-    "model": "Midjourney v6",
-    "promptEn": "Stunning modern interior design photography, double-height living room with floor-to-ceiling windows, minimalist Japandi aesthetic, concrete and warm wood, single statement art piece, natural light flooding in, Leica Q3 wide angle",
-    "promptZh": ""
-  },
-  {
-    "id": 24,
-    "title": "Dragon Rider",
-    "titleZh": "驭龙骑士",
-    "category": "fantasy",
-    "tags": [
-      "dragon",
-      "rider",
-      "epic"
-    ],
-    "prompt": "Epic dragon rider soaring through storm clouds, massive red dragon with battle scars, rider in gleaming plate armor, lightning illuminating the scene, rain and wind effects, dramatic low angle perspective, fantasy book cover quality",
-    "image": "https://picsum.photos/seed/fan5/400/580",
-    "model": "Nanobanana Pro",
-    "promptEn": "Epic dragon rider soaring through storm clouds, massive red dragon with battle scars, rider in gleaming plate armor, lightning illuminating the scene, rain and wind effects, dramatic low angle perspective, fantasy book cover quality",
-    "promptZh": ""
-  },
-  {
-    "id": 25,
-    "title": "Cute Robot Friend",
-    "titleZh": "可爱机器人朋友",
-    "category": "3d",
-    "tags": [
-      "robot",
-      "cute",
-      "character"
-    ],
-    "prompt": "Adorable small robot character with big expressive LED eyes, rounded white body with mint accents, tiny antenna, sitting on a park bench reading a book, autumn leaves falling, Pixar quality render, subsurface scattering, warm afternoon light",
-    "image": "https://picsum.photos/seed/3d5/400/460",
-    "model": "Stable Diffusion",
-    "promptEn": "Adorable small robot character with big expressive LED eyes, rounded white body with mint accents, tiny antenna, sitting on a park bench reading a book, autumn leaves falling, Pixar quality render, subsurface scattering, warm afternoon light",
-    "promptZh": ""
-  },
-  {
-    "id": 26,
-    "title": "Double Exposure Wolf",
-    "titleZh": "双重曝光狼",
-    "category": "realistic",
-    "tags": [
-      "double-exposure",
-      "wolf",
-      "nature"
-    ],
-    "prompt": "Double exposure portrait of a wolf and pine forest, starry night sky visible through the silhouette, northern lights in green and purple, snow-capped mountains in the background, artistic photography, high contrast, moody atmosphere",
-    "image": "https://picsum.photos/seed/real6/400/520",
-    "model": "Midjourney v6",
-    "promptEn": "Double exposure portrait of a wolf and pine forest, starry night sky visible through the silhouette, northern lights in green and purple, snow-capped mountains in the background, artistic photography, high contrast, moody atmosphere",
-    "promptZh": ""
-  },
-  {
-    "id": 27,
-    "title": "Pixel Art Dungeon",
-    "titleZh": "像素地牢",
-    "category": "anime",
-    "tags": [
-      "pixel",
-      "dungeon",
-      "retro"
-    ],
-    "prompt": "16-bit pixel art RPG dungeon scene, treasure chest glowing in torchlight, skeleton enemies, hero character with sword and shield, stone walls with moss, mysterious doorway, retro gaming aesthetic, detailed sprite work, nostalgic color palette",
-    "image": "https://picsum.photos/seed/anime6/400/400",
-    "model": "Nanobanana Pro",
-    "promptEn": "16-bit pixel art RPG dungeon scene, treasure chest glowing in torchlight, skeleton enemies, hero character with sword and shield, stone walls with moss, mysterious doorway, retro gaming aesthetic, detailed sprite work, nostalgic color palette",
-    "promptZh": ""
-  },
-  {
-    "id": 28,
-    "title": "Enchanted Library",
-    "titleZh": "魔法图书馆",
-    "category": "fantasy",
-    "tags": [
-      "library",
-      "magic",
-      "books"
-    ],
-    "prompt": "Massive enchanted library with infinite bookshelves reaching into darkness above, floating glowing books, spiral staircases, warm candlelight, wizard studying at an ancient desk, magical dust motes in light beams, ultra wide angle",
-    "image": "https://picsum.photos/seed/fan6/400/600",
-    "model": "Stable Diffusion",
-    "promptEn": "Massive enchanted library with infinite bookshelves reaching into darkness above, floating glowing books, spiral staircases, warm candlelight, wizard studying at an ancient desk, magical dust motes in light beams, ultra wide angle",
-    "promptZh": ""
-  },
-  {
-    "id": 29,
-    "title": "Glass Morphism UI",
-    "titleZh": "玻璃拟态界面",
-    "category": "3d",
-    "tags": [
-      "glassmorphism",
-      "ui",
-      "modern"
-    ],
-    "prompt": "Glassmorphism UI design mockup floating in space, frosted glass cards with colorful gradient backgrounds, soft shadows, rounded corners, modern dashboard layout, iOS inspired, clean typography, light theme, 3D perspective, figma quality render",
-    "image": "https://picsum.photos/seed/3d6/400/450",
-    "model": "Midjourney v6",
-    "promptEn": "Glassmorphism UI design mockup floating in space, frosted glass cards with colorful gradient backgrounds, soft shadows, rounded corners, modern dashboard layout, iOS inspired, clean typography, light theme, 3D perspective, figma quality render",
-    "promptZh": ""
-  },
-  {
-    "id": 31,
-    "title": "Post-Apocalyptic Garden",
-    "titleZh": "末世花园",
-    "category": "cyberpunk",
-    "tags": [
-      "apocalypse",
-      "garden",
-      "nature",
-      "话多",
-      "nice"
-    ],
-    "prompt": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "image": "https://picsum.photos/seed/cyber5/400/490",
-    "model": "Stable Diffusion",
-    "promptEn": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "promptZh": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "images": [
-      "https://picsum.photos/seed/cyber5/400/490"
-    ],
-    "showcase": "",
-    "createdAt": 1772245139110,
-    "updatedAt": 1772263656949,
-    "showcaseButtons": []
-  },
-  {
-    "id": 30,
-    "title": "PostLine",
-    "titleZh": "我的世界花园",
-    "category": "cyberpunk",
-    "tags": [
-      "apocalypse",
-      "garden",
-      "nature",
-      "an2tu",
-      "natur"
-    ],
-    "prompt": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "image": "a.jpg",
-    "model": "Midjourney v6",
-    "promptEn": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "promptZh": "Post-apocalyptic rooftop garden in an abandoned skyscraper, nature reclaiming the city, overgrown vines and wildflowers, rusted metal structures, beautiful sunset through broken windows, contrast of decay and growth, hopeful atmosphere",
-    "images": [
-      "a.jpg"
-    ],
-    "showcase": "",
-    "showcaseButtons": [],
-    "createdAt": 1772263696525,
-    "updatedAt": 1772274193020
-  },
-  {
-    "id": 32,
-    "title": "测试导出1",
-    "titleZh": "261212",
-    "category": "anime",
-    "model": "Midjourney v6",
-    "tags": [
-      "测试1",
-      "测试2",
-      "测试3",
-      "测试4",
-      "测试5"
-    ],
-    "image": "a.jpg",
-    "prompt": "测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿",
-    "createdAt": 1772242387858,
-    "updatedAt": 1772274183840,
-    "promptEn": "测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿",
-    "promptZh": "你好呀，我只是测试\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿\n测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿测啊呃呃呃呃呃我饿",
-    "images": [
-      "a.jpg",
-      "https://picsum.photos/seed/cyber5/400/490"
-    ],
-    "showcase": "http://xhslink.com/o/8ICU44mqXJ8",
-    "showcaseButtons": [
-      {
-        "label": "作品1",
-        "url": "http://xhslink.com/o/8ICU44mqXJ8"
-      },
-      {
-        "label": "微博",
-        "url": "https://weibo.com/7619798979/QtNFpn7zR"
-      },
-      {
-        "label": "头条",
-        "url": "https://www.toutiao.com/w/1856640203500554/?app=news_article&category_new=profile_all&module_name=Android_tt_url&share_did=MS4wLjACAAAAVIY6CWt6Y9WBjDoXCG1pQlnE-TGDJyzlvXBJzKBJQro&share_token=1518df85-f6a0-4c9a-92ca-a353f7a349ab&share_uid=MS4wLjABAAAA6h77I1o_XC1Mr07Cc2-ErXoGWpi4aHHRDSlCl1KY036KqZmGwFKGC7YhsgEWSVHs&timestamp=1772247271&tt_from=copy_link&upstream_biz=Android_url&utm_campaign=client_share&utm_medium=toutiao_android&utm_source=copy_link&source=m_redirect&wid=1772247312020"
-      }
-    ]
-  }
+  { id:0, title:"Cyberpunk Samurai", titleZh:"zrh测试1", category:"cyberpunk", tags:["neon","warrior","futuristic"], prompt:"A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k", image: "assets/img/a.jpg", model:"Midjourney v6" },
+  { id:1, title:"Cyberpunk Samurai", titleZh:"赛博朋克11武士", category:"cyberpunk", tags:["neon","warrior","futuristic"], prompt:"A cyberpunk samurai standing on a neon-lit rooftop in Neo Tokyo, rain pouring down, holographic advertisements reflecting in puddles, wearing glowing armor with circuit patterns, katana crackling with electric energy, cinematic lighting, ultra detailed, 8k", image:"https://picsum.photos/seed/cyber1b/400/560", model:"Midjourney v6" },
+  { id:2, title:"Anime Girl in Rain", titleZh:"雨中动漫少女", category:"anime", tags:["rain","girl","emotional"], prompt:"Beautiful anime girl standing under a cherry blossom tree in the rain, transparent umbrella, soft pink petals falling, school uniform, melancholic expression, Studio Ghibli style, watercolor background, ethereal lighting", image:"https://picsum.photos/seed/anime1/400/500", model:"Stable Diffusion" },
+  { id:19, title:"Floating Islands", titleZh:"浮空岛屿", category:"fantasy", tags:["floating","island","adventure"], prompt:"Breathtaking floating islands connected by rope bridges, waterfalls pouring into clouds below, lush green vegetation, small village with thatched roofs, airships passing between islands, golden hour lighting, adventure game concept art, panoramic view", image:"https://picsum.photos/seed/fan4/400/350", model:"Stable Diffusion" },
 ];
 
 const CATEGORIES = [
-  { id:"all", label:"All Prompts", labelZh:"全部提示词", icon:"✦" },
-  { id:"anime", label:"Anime", labelZh:"动漫", icon:"🌸" },
-  { id:"realistic", label:"Realistic", labelZh:"写实", icon:"📷" },
-  { id:"cyberpunk", label:"Cyberpunk", labelZh:"赛博朋克", icon:"🌃" },
-  { id:"fantasy", label:"Fantasy", labelZh:"奇幻", icon:"🐉" },
-  { id:"3d", label:"3D Render", labelZh:"3D渲染", icon:"💎" },
+  { id:"all", label:"All Prompts", labelZh:"全部", icon:"✦" },
+  { id:"Girl", label:"Nice Girl", labelZh:"美女", icon:"🌸" },
+  { id:"Chaijie", label:"OOTD", labelZh:"OOTD", icon:"📷" },
+  { id:"PaCong", label:"PaCong", labelZh:"爬虫", icon:"🐉" },
+  { id:"Prompt", label:"Prompt", labelZh:"Prompt", icon:"🌃" },
+  { id:"MingXing", label:"MingXing", labelZh:"明星", icon:"💎" },
+    { id:"other", label:"other", labelZh:"其他", icon:"💎" },
+    { id:"gege", label:"gege", labelZh:"各个", icon:"💎" },
 ];
 
-const MODELS = ["Midjourney v6","Stable Diffusion","Nanobanana Pro","Flux-kontext","DALL-E 3"];
+const MODELS = ["Midjourney v6","Stable Diffusion","Nanobanana Pro","Doubao4.6","DALL-E 3"];
 
 const T = {
   en: { subtitle:"AI Prompt Library", heroTitle1:"700+", heroTitle2:" Curated AI Prompts", heroText:"Explore 700+ curated AI prompts for Midjourney, Stable Diffusion & more", searchPlaceholder:"Search prompts by keyword or tag...", copyBtn:"Copy Prompt", copied:"Copied!", admin:"Admin", copyEn:"Copy English", copyZh:"Copy Chinese", promptEnLabel:"English Prompt", promptZhLabel:"Chinese Prompt", close:"Close", model:"Model", tags:"Tags", promptCount:"prompts", footer:"Free & Open Source AI Prompt Library", noResults:"No prompts found. Try a different search.", statPrompts:"Prompts", statCategories:"Categories", statModels:"AI Models", about:"About", contribute:"Contribute", admin:"Admin" },
@@ -2216,8 +623,116 @@ const i18n = T;
 
 
 // ══════ DATA LAYER (localStorage) ══════
-const STORAGE_KEY = 'zrhAi_prompts_data';
-const LEGACY_STORAGE_KEYS = ['aiwind_prompts_data','aiwind_prompts_data','prompt_library_data'];
+const STORAGE_KEY = 'zrh_prompts_data';
+const LEGACY_STORAGE_KEYS = ['zrhAi_prompts_data','prompt_library_data'];
+/* ══════ ROOT JSON (read on every open/refresh) ══════
+   只要把 JSON 文件放在“同目录/站点根目录”，每次打开/刷新都会重新读取它。
+   默认文件名：zrh_prompts_data.json（和你“导出 JSON”的文件名一致）
+   支持 JSON 结构：
+     1) 直接数组：[ {...}, {...} ]
+     2) 对象包裹：{ "data": [ {...}, {...} ], "settings": {...可选...} }
+*/
+const ROOT_JSON_URL = './zrh_prompts_data.json';
+const __JSON_FILE_PATTERN = /^(\d{14})_zrh_prompts_data\.json$/;
+
+async function __tryFetchJson(url){
+  const fullUrl = url + (url.includes('?') ? '&' : '?') + 'ts=' + Date.now();
+  const resp = await fetch(fullUrl, { cache: 'no-store' });
+  if(!resp.ok) throw new Error('HTTP ' + resp.status);
+  return await resp.json();
+}
+
+async function __fetchRootJson(){
+  if (location.protocol === 'file:') {
+    throw new Error('LOCAL_FILE_MODE_BLOCKS_FETCH');
+  }
+
+  // 1) 优先从 localStorage 获取上次导出的带时间戳文件名
+  const lastExportName = localStorage.getItem('zrhAi_last_export_json') || '';
+  if(lastExportName){
+    try{
+      const data = await __tryFetchJson('./' + lastExportName);
+      console.log('[ROOT_JSON] loaded timestamped file:', lastExportName);
+      return data;
+    }catch(e){
+      console.warn('[ROOT_JSON] timestamped file not found:', lastExportName, e.message);
+    }
+  }
+
+  // 2) 尝试读取目录索引文件 zrh_json_index.json
+  try{
+    const idxResp = await fetch('./zrh_json_index.json?ts=' + Date.now(), { cache: 'no-store' });
+    if(idxResp.ok){
+      const idxData = await idxResp.json();
+      if(Array.isArray(idxData.files) && idxData.files.length){
+        const sorted = idxData.files.filter(f => __JSON_FILE_PATTERN.test(f)).sort((a,b) => b.localeCompare(a));
+        if(sorted.length){
+          const latest = sorted[0];
+          try{
+            const data = await __tryFetchJson('./' + latest);
+            localStorage.setItem('zrhAi_last_export_json', latest);
+            console.log('[ROOT_JSON] loaded from index, latest:', latest);
+            return data;
+          }catch(e2){}
+        }
+      }
+    }
+  }catch(e){}
+
+  // 3) 回退：读取默认文件名
+  return await __tryFetchJson(ROOT_JSON_URL);
+}
+
+function __extractRootPayload(parsed){
+  const out = { data: null, settings: null };
+  if(Array.isArray(parsed)) { out.data = parsed; return out; }
+  if(parsed && typeof parsed === 'object'){
+    if(Array.isArray(parsed.data)) out.data = parsed.data;
+    else if(Array.isArray(parsed.prompts)) out.data = parsed.prompts; // 兼容 prompts 字段
+    if(parsed.settings && typeof parsed.settings === 'object') out.settings = parsed.settings;
+  }
+  return out;
+}
+
+async function refreshFromRootJSON({ silent=true } = {}){
+  try{
+    const parsed = await __fetchRootJson();
+    const { data, settings: s } = __extractRootPayload(parsed);
+
+    let changed = false;
+
+    if(Array.isArray(data)){
+      // Ensure timestamps exist (for sorting)
+      const now = Date.now();
+      prompts = data.map((p,i)=> {
+        const base = normalizePromptFields(p);
+        return {
+          ...base,
+          id: coerceIntId(base.id, i),
+          createdAt: base.createdAt || base.updatedAt || now,
+          updatedAt: base.updatedAt || base.createdAt || now
+        };
+      });
+      assertNoDuplicateIds(prompts, '根目录 JSON');
+      savePrompts(prompts);
+      changed = true;
+    }
+
+    if(s && typeof s === 'object'){
+      settings = s;
+      saveSettings(settings);
+      changed = true;
+    }
+
+    if(changed && !silent){
+      showToast("🔄 已从根目录 JSON 重新读取", "success");
+    }
+    return changed;
+  }catch(e){
+    console.warn("[ROOT_JSON] load failed:", e);
+    return false;
+  }
+}
 // ══════ SETTINGS (UI config) ══════
 const SETTINGS_KEY = 'zrhAi_settings';
 
@@ -2294,7 +809,7 @@ function openInfoModal(id){
   titleEl.textContent = it.label || 'Info';
   const parts = [];
   if(it.image){
-    parts.push(`<div class="info-img-wrap"><img src="${escHtml(it.image)}" alt="image"></div>`);
+    parts.push(`<div class="info-img-wrap"><img src="${escHtml(resolveMediaUrl(it.image))}" alt="image"></div>`);
   }
   if(it.text){
     parts.push(`<div class="info-text">${escHtml(it.text).replace(/\n/g,'<br>')}</div>`);
@@ -2316,6 +831,14 @@ function closeInfoModal(){
 function normalizePromptFields(p) {
   // Backward compatible: older data uses `prompt`
   const out = { ...p };
+
+  // Coerce id to integer if possible
+  if (out.id !== undefined && out.id !== null) {
+    const n = Number(out.id);
+    if (Number.isFinite(n) && Math.floor(n) === n && n >= 0) out.id = n;
+  }
+
+  // Ensure promptEn/promptZh exist (older data may only have `prompt`)
   if (typeof out.promptEn !== "string" && typeof out.promptZh !== "string") {
     out.promptEn = (typeof out.prompt === "string") ? out.prompt : "";
     out.promptZh = "";
@@ -2323,11 +846,35 @@ function normalizePromptFields(p) {
     out.promptEn = (typeof out.promptEn === "string") ? out.promptEn : ((typeof out.prompt === "string") ? out.prompt : "");
     out.promptZh = (typeof out.promptZh === "string") ? out.promptZh : "";
   }
+
   // Keep legacy `prompt` for compatibility with existing code paths (we'll stop using it in UI)
   out.prompt = out.promptEn || out.promptZh || out.prompt || "";
   return out;
 }
 
+// ID utils: ensure numeric IDs + forbid duplicates
+function coerceIntId(val, fallback) {
+  const n = Number(val);
+  if (Number.isFinite(n) && Math.floor(n) === n && n >= 0) return n;
+  return fallback;
+}
+function getDuplicateIds(list) {
+  const seen = new Set();
+  const dups = new Set();
+  (list || []).forEach(it => {
+    const id = coerceIntId(it && it.id, null);
+    if (id === null) return;
+    if (seen.has(id)) dups.add(id);
+    else seen.add(id);
+  });
+  return Array.from(dups).sort((a,b)=>b-a);
+}
+function assertNoDuplicateIds(list, ctx='数据') {
+  const dups = getDuplicateIds(list);
+  if (dups.length) {
+    throw new Error(`${ctx}存在重复 ID：${dups.join(', ')}。重复 ID 无法保存/排序，请先修正。`);
+  }
+}
 function getPromptByLang(p, lang) {
   const pp = normalizePromptFields(p);
   if (lang === "zh") return (pp.promptZh || pp.promptEn || "");
@@ -2336,6 +883,8 @@ function getPromptByLang(p, lang) {
 
 function parseImageList(raw) {
   if (!raw) return [];
+  // normalize: support literal \\n sequences and Windows newlines
+  raw = String(raw).replace(/\\n/g, '\n').replace(/\r\n/g, '\n');
   // allow comma, newline, semicolon, pipe
   return raw.split(/[,\n;|]+/).map(s=>s.trim()).filter(Boolean);
 }
@@ -2344,6 +893,33 @@ function getImages(p) {
   if (Array.isArray(p.images) && p.images.length) return p.images;
   const raw = (p.image || '').trim();
   return parseImageList(raw) || (raw ? [raw] : []);
+}
+
+function resolveMediaUrl(raw) {
+  const src = String(raw || '').trim();
+  if (!src) return '';
+  if (/^(data:|blob:|https?:|file:)/i.test(src)) return src;
+
+  let normalized = src.replace(/\\/g, '/').replace(/^['"]|['"]$/g, '');
+  if (/^\/\//.test(normalized)) {
+    return (location.protocol === 'file:' ? 'https:' : location.protocol) + normalized;
+  }
+  if (/^[A-Za-z]:\//.test(normalized)) {
+    return 'file:///' + encodeURI(normalized).replace(/#/g, '%23');
+  }
+  if (normalized.startsWith('/')) {
+    normalized = normalized.replace(/^\/+/, '');
+    return new URL('./' + normalized, location.href).href;
+  }
+  return new URL(normalized.replace(/^\.\//, ''), location.href).href;
+}
+
+function getResolvedImages(p) {
+  return getImages(p).map(resolveMediaUrl).filter(Boolean);
+}
+
+function getFirstResolvedImage(p) {
+  return getResolvedImages(p)[0] || '';
 }
 
 
@@ -2402,10 +978,25 @@ function loadPrompts() {
 }
 
 function savePrompts(data) {
+  // Enforce: ID unique + ID desc (so export/import/display are stable)
+  try { assertNoDuplicateIds(data, '保存数据'); } catch(e) { console.error(e); toast('❌ ' + e.message, 'error'); return; }
+  sortPromptsCanonical(data);
   // Store with version so exported HTML can override older localStorage data
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: EMBEDDED_VERSION, data }));
 }
 
+function sortPromptsCanonical(list) {
+  // Canonical order: strictly by ID descending (后台/导入/导出/展示统一)
+  return list.sort((a,b) => {
+    const ia = coerceIntId(a && a.id, 0);
+    const ib = coerceIntId(b && b.id, 0);
+    if (ib !== ia) return ib - ia;
+    // fallback (shouldn't happen if IDs are unique)
+    const ta = (a && (a.updatedAt || a.createdAt)) || 0;
+    const tb = (b && (b.updatedAt || b.createdAt)) || 0;
+    return tb - ta;
+  });
+}
 
 // ══════ EXPORT / IMPORT (No server) ══════
 function downloadBlob(filename, content, mime="application/octet-stream") {
@@ -2420,9 +1011,30 @@ function downloadBlob(filename, content, mime="application/octet-stream") {
 }
 
 function exportPromptsJSON() {
-  const payload = { version: EMBEDDED_VERSION, exportedAt: Date.now(), data: prompts };
-  downloadBlob("aiwind_prompts_data.json", JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
-  toast("✅ 已导出 JSON：aiwind_prompts_data.json");
+  try{ assertNoDuplicateIds(prompts, '当前数据'); }catch(e){ toast('❌ ' + e.message, 'error'); return; }
+  const sorted = sortPromptsCanonical([...prompts]);
+  const now = new Date();
+  const ts = now.getFullYear()
+    + String(now.getMonth()+1).padStart(2,'0')
+    + String(now.getDate()).padStart(2,'0')
+    + String(now.getHours()).padStart(2,'0')
+    + String(now.getMinutes()).padStart(2,'0')
+    + String(now.getSeconds()).padStart(2,'0');
+  const exportedAtStr = now.getFullYear() + '-'
+    + String(now.getMonth()+1).padStart(2,'0') + '-'
+    + String(now.getDate()).padStart(2,'0') + ' '
+    + String(now.getHours()).padStart(2,'0') + ':'
+    + String(now.getMinutes()).padStart(2,'0') + ':'
+    + String(now.getSeconds()).padStart(2,'0');
+  const fileName = ts + '_zrh_prompts_data.json';
+  const payload = { version: EMBEDDED_VERSION, exportedAt: exportedAtStr, timestamp: ts, data: sorted };
+  if(settings && typeof settings === 'object' && Object.keys(settings).length > 0){
+    payload.settings = settings;
+  }
+  downloadBlob(fileName, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+  // 记录最新导出文件名，下次打开页面时自动读取
+  localStorage.setItem('zrhAi_last_export_json', fileName);
+  toast("✅ 已导出 JSON：" + fileName);
 }
 
 function exportFullHTML() {
@@ -2441,8 +1053,16 @@ function exportFullHTML() {
   // Replace DEFAULT_PROMPTS array block (non-greedy)
   src = src.replace(/const\s+DEFAULT_PROMPTS\s*=\s*\[[\s\S]*?\n\];/, `const DEFAULT_PROMPTS = ${serialized};`);
 
-  downloadBlob("aiwindV2.html", src, "text/html;charset=utf-8");
-  toast("✅ 已导出 HTML：aiwindV2.html（包含最新内容）");
+  const now = new Date();
+  const tsHtml = now.getFullYear()
+    + String(now.getMonth()+1).padStart(2,'0')
+    + String(now.getDate()).padStart(2,'0')
+    + String(now.getHours()).padStart(2,'0')
+    + String(now.getMinutes()).padStart(2,'0')
+    + String(now.getSeconds()).padStart(2,'0');
+  const htmlFileName = tsHtml + '_zrhAi.html';
+  downloadBlob(htmlFileName, src, "text/html;charset=utf-8");
+  toast("✅ 已导出 HTML：" + htmlFileName + "（包含最新内容）");
 }
 
 function triggerImportJSON() {
@@ -2452,6 +1072,7 @@ function triggerImportJSON() {
 
 function onImportJSONFile(file) {
   if (!file) return;
+  const importedFileName = file.name || '';
   const reader = new FileReader();
   reader.onload = () => {
     try {
@@ -2464,12 +1085,18 @@ function onImportJSONFile(file) {
         const base = normalizePromptFields(p);
         return {
           ...base,
-          id: (typeof base.id === "number") ? base.id : i,
+          id: coerceIntId(base.id, i),
           createdAt: base.createdAt || base.updatedAt || now,
           updatedAt: base.updatedAt || base.createdAt || now
         };
       });
+      // Keep consistent order with admin: ID desc
+      assertNoDuplicateIds(prompts, '导入 JSON');
       savePrompts(prompts);
+      // 记录导入的文件名，以便下次打开页面时读取
+      if(__JSON_FILE_PATTERN.test(importedFileName)){
+        localStorage.setItem('zrhAi_last_export_json', importedFileName);
+      }
       renderFront(); renderAdmin();
       toast("✅ 导入成功：内容已覆盖并保存");
     } catch (e) {
@@ -2486,7 +1113,7 @@ function getNextId(prompts) {
 
 // ══════ APP STATE ══════
 let prompts = loadPrompts();
-let state = { lang:"zh", search:"", category:"all", selectedPrompt:null, currentPage:"front", adminSearch:"", adminFilter:"all", editingPrompt:null, pageIndex:1, pageSize:30 , searchDraft:"", adminSearchDraft:""};
+let state = { lang:"zh", search:"", category:"all", selectedPrompt:null, currentPage:"front", adminSearch:"", adminFilter:"all", editingPrompt:null, pageIndex:1, pageSize:35, adminPageIndex:1, adminPageSize:50, searchDraft:"", adminSearchDraft:""};
 
 function t(key) { return T[state.lang][key]; }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
@@ -2502,6 +1129,7 @@ function applyFrontSearch(){
 }
 function applyAdminSearch(){
   state.adminSearch = (state.adminSearchDraft ?? '').trim();
+  state.adminPageIndex = 1;
   renderAdmin();
 }
 // ══════ TOAST ══════
@@ -2512,6 +1140,9 @@ function showToast(msg, type='success') {
   document.getElementById('toastContainer').appendChild(el);
   setTimeout(() => el.remove(), 3000);
 }
+
+// alias
+function toast(msg, type='success'){ showToast(msg, type); }
 
 // ══════ PAGE ROUTING ══════
 function goTo(page) {
@@ -2538,21 +1169,17 @@ function getFiltered() {
       const ms = !q || p.title.toLowerCase().includes(q) || (p.titleZh||'').toLowerCase().includes(q) || getPromptByLang(p,'en').toLowerCase().includes(q) || getPromptByLang(p,'zh').toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q));
       return mc && ms;
     })
-    // ✅ 最新（新增/编辑）优先展示：按 updatedAt/createdAt 倒序；旧数据无时间字段时回退到 id
-    .sort((a,b) => ((b.updatedAt||b.createdAt||b.id||0) - (a.updatedAt||a.createdAt||a.id||0)));
+    // ✅ 展示顺序：严格按 ID 降序（和后台一致）
+    .sort((a,b) => (coerceIntId(b.id,0) - coerceIntId(a.id,0)));
 }
 
 
-function getCols() { const w=window.innerWidth; if(w<640)return 1; if(w<900)return 2; if(w<1200)return 3; return 4; }
+function getCols() { const w=window.innerWidth; if(w<400)return 1; if(w<640)return 2; if(w<900)return 3; if(w<1200)return 4; return 5; }
 
 function buildMasonry(items, n) {
-  const cols=Array.from({length:n},()=>[]), h=new Array(n).fill(0);
-  items.forEach(item => {
-    const s=h.indexOf(Math.min(...h));
-    cols[s].push(item);
-    h[s]+=(parseInt(item.image.split("/").pop())||400)+80;
-  });
-  return cols;
+  // With CSS Grid, we don't need column-based distribution.
+  // Return a single "column" with all items so the grid lays them out.
+  return [items];
 }
 
 
@@ -2612,7 +1239,7 @@ function getHomeCfg(){
 function renderNavLogo(){
   const hc = getHomeCfg();
   if(hc.logoImage){
-    return `<img class="nav-logo-img" src="${escHtml(hc.logoImage)}" alt="${escHtml(hc.siteName)}" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\'nav-logo\'>${escHtml(hc.logoText||'Ai')}</div>');">`;
+    return `<img class="nav-logo-img" src="${escHtml(resolveMediaUrl(hc.logoImage))}" alt="${escHtml(hc.siteName)}" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\'nav-logo\'>${escHtml(hc.logoText||'Ai')}</div>');">`;
   }
   return `<div class="nav-logo">${escHtml(hc.logoText||'Ai')}</div>`;
 }
@@ -2631,7 +1258,7 @@ function updateModal() {
     return;
   }
 
-  const imgs = getImages(sp);
+  const imgs = getResolvedImages(sp);
   if(!Number.isInteger(state.modalImgIndex)) state.modalImgIndex = 0;
   if(state.modalImgIndex < 0) state.modalImgIndex = 0;
   if(state.modalImgIndex >= imgs.length) state.modalImgIndex = 0;
@@ -2653,7 +1280,7 @@ function renderModalInner(sp, curImg, totalImgs, idx){
     <div class="modal-grid">
       <div class="modal-image">
         <div class="modal-image-wrap" onpointerdown="__modalSwipeStart(event)" onpointerup="__modalSwipeEnd(event)">
-          <img src="${escHtml(curImg)}" alt="${escHtml(sp.titleZh||sp.title||'')}" loading="lazy">
+          <img src="${escHtml(resolveMediaUrl(curImg))}" alt="${escHtml(sp.titleZh||sp.title||'')}" loading="lazy">
           ${totalImgs>1?`
             <button class="img-nav left" onclick="modalPrevImg(event)">‹</button>
             <button class="img-nav right" onclick="modalNextImg(event)">›</button>
@@ -2689,7 +1316,7 @@ function renderPager(totalItems, pageSize, totalPages){
   if(totalItems<=pageSize) return '';
   const cur = state.pageIndex || 1;
   const pages = [];
-  for(let p=totalPages;p>=1;p--) pages.push(p); // descending display (2,1,...)
+  for(let p=1;p<=totalPages;p++) pages.push(p); // ascending display (1,2,...)
   return `
     <div class="pager-wrap">
       <div class="pager" role="navigation" aria-label="Pagination">
@@ -2711,7 +1338,7 @@ function renderPager(totalItems, pageSize, totalPages){
 
 function gotoPage(p){
   const filtered = getFiltered();
-  const pageSize = state.pageSize || 50;
+  const pageSize = state.pageSize || 35;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   let page = Number(p)||1;
   if(page<1) page=1;
@@ -2722,14 +1349,15 @@ function gotoPage(p){
 }
 
 function renderFront() {
+  // Keep consistent order: ID desc
+  sortPromptsCanonical(prompts);
   const filtered = getFiltered();
   const counts = getCatCounts();
-  const pageSize = state.pageSize || 50;
+  const pageSize = state.pageSize || 35;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   if (!state.pageIndex || state.pageIndex < 1) state.pageIndex = 1;
   if (state.pageIndex > totalPages) state.pageIndex = 1;
   const pageItems = filtered.slice((state.pageIndex - 1) * pageSize, state.pageIndex * pageSize);
-  const cols = buildMasonry(pageItems, getCols());
   const sp = state.selectedPrompt;
   document.getElementById('appFront').innerHTML = `
     <nav class="navbar"><div class="navbar-inner">
@@ -2771,11 +1399,11 @@ function renderFront() {
     <section class="masonry-section">
       <div class="masonry-header"><div class="masonry-count">${filtered.length} ${t("promptCount")}</div></div>
       ${filtered.length===0?`<div class="no-results"><span class="no-results-icon">🔍</span>${t("noResults")}</div>`:`
-        <div class="masonry-grid">${cols.map(col=>`<div class="masonry-col">${col.map(p=>`
-          <div class="prompt-card" style="animation-delay:${p.id*30}ms" onclick="openModal(${p.id})">
+        <div class="masonry-grid">${pageItems.map((p,i)=>`
+          <div class="prompt-card" style="animation-delay:${Math.min(i*40,600)}ms" onclick="openModal(${p.id})">
             <div class="card-image-wrap">
               <div class="card-skeleton" id="skel-${p.id}"></div>
-              <img src="${escHtml(getImages(p)[0] || '')}" alt="${escHtml(p.title)}" loading="lazy" style="opacity:0" onload="this.style.opacity=1;var s=document.getElementById('skel-${p.id}');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22>No Image</text></svg>';">
+              <img data-src="${escHtml(getFirstResolvedImage(p))}" alt="${escHtml(p.title)}" loading="lazy" decoding="async" style="opacity:0" onload="this.style.opacity=1;var s=document.getElementById('skel-${p.id}');if(s)s.style.display='none';" onerror="this.style.opacity=1;this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%2316161f%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%235a5a6e%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2216%22>No Image</text></svg>';">
               <div class="card-overlay">
                 <span class="card-model">${escHtml(p.model)}</span>
                 <button class="card-copy-btn" onclick="event.stopPropagation();copyPrompt(\`${escAttr(getPromptDisplay(p))}\`,this)">⧉ ${t("copyBtn")}</button>
@@ -2786,14 +1414,14 @@ function renderFront() {
   ${renderShowcaseInline(p,true)}
   <div class="card-tags">${p.tags.map(tg=>`<span class="tag">#${escHtml(tg)}</span>`).join("")}</div>
 </div>
-          </div>`).join("")}</div>`).join("")}</div>`}
+          </div>`).join("")}</div>`}
       ${renderPager(filtered.length, pageSize, totalPages)}
     </section>
 
     <footer class="footer">
       <div class="footer-brand">ZrhAi</div>
       <p>${t("footer")}</p>
-      <div class="footer-links"><a href="#">GitHub</a><a href="#">${t("about")}</a><a href="#">${t("contribute")}</a></div>
+      <div class="footer-links"><a href="#" onclick="return false;">GitHub</a><a href="#" onclick="return false;">${t("about")}</a><a href="#" onclick="return false;">${t("contribute")}</a><a href="#" onclick="exportPromptsJSON(); return false;">${state.lang==='zh'?'导出JSON':'Export JSON'}</a><a href="#" onclick="triggerImportJSON(); return false;">${state.lang==='zh'?'导入JSON':'Import JSON'}</a></div>
     </footer>
 
     <div id="modalBackdrop" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal()">
@@ -2801,9 +1429,54 @@ function renderFront() {
     </div>`;
   updateModal();
 
+  // Lazy-load images via IntersectionObserver for performance
+  initLazyImages();
 
   // Keep search focus
   if(state.search){const el=document.getElementById('frontSearch');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length;}}
+}
+
+// ══════ LAZY IMAGE LOADING ══════
+let _lazyObserver = null;
+function initLazyImages(){
+  // Disconnect previous observer
+  if(_lazyObserver) _lazyObserver.disconnect();
+
+  const imgs = document.querySelectorAll('.masonry-grid img[data-src]');
+  if(!imgs.length) return;
+
+  // Load first 10 images immediately (above fold), rest via observer
+  const EAGER_COUNT = 10;
+  imgs.forEach((img, i) => {
+    if(i < EAGER_COUNT){
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    }
+  });
+
+  if('IntersectionObserver' in window){
+    _lazyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          const img = entry.target;
+          if(img.dataset.src){
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          _lazyObserver.unobserve(img);
+        }
+      });
+    }, { rootMargin:'200px 0px' }); // start loading 200px before visible
+
+    imgs.forEach((img, i) => {
+      if(i >= EAGER_COUNT) _lazyObserver.observe(img);
+    });
+  } else {
+    // Fallback: load all
+    imgs.forEach(img => {
+      if(img.dataset.src){ img.src = img.dataset.src; img.removeAttribute('data-src'); }
+    });
+  }
 }
 
 // ══════ ADMIN PAGE ══════
@@ -2815,14 +1488,28 @@ function getAdminFiltered() {
       const ms = !q || p.title.toLowerCase().includes(q) || p.titleZh.includes(q) || String(p.id).includes(q) || p.tags.some(t=>t.toLowerCase().includes(q));
       return mc && ms;
     })
-    // ✅ 后台也按最近更新倒序展示
-    .sort((a,b) => ((b.updatedAt||b.createdAt||b.id||0) - (a.updatedAt||a.createdAt||a.id||0)));
+    // ✅ 后台严格按 ID 降序展示
+    .sort((a,b) => (coerceIntId(b.id,0) - coerceIntId(a.id,0)));
 }
 
 
 function renderAdmin() {
+  // Always enforce ID desc order for admin listing
+  sortPromptsCanonical(prompts);
+  const dups = getDuplicateIds(prompts);
+  if (dups.length && !window.__zrhDupWarned) {
+    window.__zrhDupWarned = true;
+    toast('⚠️ 发现重复 ID：' + dups.join(', ') + '（重复 ID 无法保存/排序）', 'error');
+  }
   const filtered = getAdminFiltered();
   const counts = getCatCounts();
+
+  // Admin pagination
+  const adminPageSize = state.adminPageSize || 50;
+  const adminTotalPages = Math.max(1, Math.ceil(filtered.length / adminPageSize));
+  if (!state.adminPageIndex || state.adminPageIndex < 1) state.adminPageIndex = 1;
+  if (state.adminPageIndex > adminTotalPages) state.adminPageIndex = 1;
+  const adminPageItems = filtered.slice((state.adminPageIndex - 1) * adminPageSize, state.adminPageIndex * adminPageSize);
 
   document.getElementById('appAdmin').innerHTML = `
     <div class="admin-header">
@@ -2852,7 +1539,7 @@ function renderAdmin() {
         oninput="if(this._ime)return;state.adminSearchDraft=this.value;"
         onkeydown="if(event.key==='Enter'){applyAdminSearch();}">
       <button class="admin-confirm ${ (state.adminSearch||"").trim()? "active":"" }" onclick="applyAdminSearch()">${state.lang==="zh"?"确认":"Search"}</button>
-      <select class="admin-filter" onchange="state.adminFilter=this.value;renderAdmin()">
+      <select class="admin-filter" onchange="state.adminFilter=this.value;state.adminPageIndex=1;renderAdmin()">
         ${CATEGORIES.map(c=>`<option value="${c.id}" ${state.adminFilter===c.id?"selected":""}>${c.icon} ${c.labelZh}</option>`).join("")}
       </select>
     </div>
@@ -2863,10 +1550,10 @@ function renderAdmin() {
           <th>ID</th><th>预览</th><th>英文标题</th><th>中文标题</th><th>分类</th><th>模型</th><th>标签</th><th>提示词</th><th>操作</th>
         </tr></thead>
         <tbody>
-          ${filtered.length===0?`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)">暂无数据</td></tr>`:
-            filtered.map(p=>`<tr>
+          ${adminPageItems.length===0?`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)">暂无数据</td></tr>`:
+            adminPageItems.map(p=>`<tr>
               <td style="color:var(--text-muted);font-size:12px">${p.id}</td>
-              <td><img class="thumb" src="${escHtml(p.image)}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22><rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/></svg>'"></td>
+              <td><img class="thumb" src="${escHtml(getFirstResolvedImage(p))}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2245%22><rect fill=%22%2316161f%22 width=%2260%22 height=%2245%22/></svg>'"></td>
               <td class="title-cell" title="${escHtml(p.title)}">${escHtml(truncateText(p.title,6))}</td>
               <td class="title-cell" title="${escHtml(p.titleZh)}">${escHtml(truncateText(p.titleZh,6))}</td>
               <td><span class="cat-badge cat-${p.category}">${p.category}</span></td>
@@ -2881,7 +1568,45 @@ function renderAdmin() {
         </tbody>
       </table>
     </div>
+
+    ${renderAdminPager(filtered.length, adminPageSize, adminTotalPages)}
   `;
+}
+
+function renderAdminPager(totalItems, pageSize, totalPages){
+  if(totalItems <= pageSize) return '';
+  const cur = state.adminPageIndex || 1;
+  const pages = [];
+  for(let p=1; p<=totalPages; p++) pages.push(p);
+  return `
+    <div class="pager-wrap" style="margin-top:24px;margin-bottom:32px;">
+      <div class="pager" role="navigation" aria-label="Admin Pagination">
+        <button class="pager-btn" onclick="gotoAdminPage(1)" ${cur===1?'disabled':''}>首页</button>
+        <button class="pager-btn" onclick="gotoAdminPage(${cur-1})" ${cur<=1?'disabled':''}>上一页</button>
+        ${pages.map(p=>`<button class="pager-page ${p===cur?'active':''}" onclick="gotoAdminPage(${p})">${p}</button>`).join('')}
+        <button class="pager-btn" onclick="gotoAdminPage(${cur+1})" ${cur>=totalPages?'disabled':''}>下一页</button>
+        <button class="pager-btn" onclick="gotoAdminPage(${totalPages})" ${cur===totalPages?'disabled':''}>末页</button>
+        <span class="pager-sep">|</span>
+        <div class="pager-jump">
+          <input type="number" min="1" max="${totalPages}" placeholder="页码" onkeydown="if(event.key==='Enter'){gotoAdminPage(parseInt(this.value||'1',10));}">
+          <button class="pager-btn" onclick="gotoAdminPage(parseInt(this.previousElementSibling.value||'1',10))">跳转</button>
+        </div>
+        <span class="pager-info">共 ${totalPages} 页 / ${totalItems} 条</span>
+      </div>
+    </div>
+  `;
+}
+
+function gotoAdminPage(p){
+  const filtered = getAdminFiltered();
+  const pageSize = state.adminPageSize || 50;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  let page = Number(p)||1;
+  if(page<1) page=1;
+  if(page>totalPages) page=totalPages;
+  state.adminPageIndex = page;
+  renderAdmin();
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // ══════ EDIT MODAL ══════
@@ -2917,6 +1642,10 @@ function renderEditModal() {
     <h2>${isNew?"＋ 新增提示词":"✎ 编辑提示词"} ${!isNew?`<span class="badge">ID: ${p.id}</span>`:""}</h2>
     <div class="form-grid">
       <div class="form-group">
+        <label>ID <span class="help">（可选：填写数字可自定义；留空自动生成）</span></label>
+        <input type="number" id="edit_id" value="${p.id===null?'':escHtml(String(p.id))}" placeholder="自动生成" min="1" step="1">
+      </div>
+      <div class="form-group">
         <label>英文标题 Title</label>
         <input type="text" id="edit_title" value="${escHtml(p.title)}" placeholder="Cyberpunk Samurai">
       </div>
@@ -2941,8 +1670,8 @@ function renderEditModal() {
         <input type="text" id="edit_tags" value="${escHtml(p.tags.join(', '))}" placeholder="neon, warrior, futuristic">
       </div>
       <div class="form-group full">
-        <label>图片链接 Image URL <span class="help">（支持多图片：用英文逗号或换行分隔）</span></label>
-        <input type="text" id="edit_image" value="${escHtml(getImages(p).join(', '))}" placeholder="https://.../a.jpg, https://.../b.jpg" oninput="updatePreview()">
+        <label>图片链接 Image URL <span class="help">（支持多图片：建议每行一个链接；也兼容英文逗号）</span></label>
+        <textarea id="edit_image" placeholder="https://.../a.jpg&#10;https://.../b.jpg" oninput="updatePreview()" style="height:200px; overflow:auto; resize:vertical;">${escHtml(getImages(p).join('\n'))}</textarea>
       </div>
       <div class="form-group full">
         <label>作品展示按钮 Showcase Buttons <span class="help">（可选：支持多个按钮，可自定义名称与跳转链接）</span></label>
@@ -2961,7 +1690,7 @@ function renderEditModal() {
     </div>
     <div class="form-preview" id="editPreview">
       <div class="form-preview-title">图片预览</div>
-      <img src="${escHtml(getImages(p)[0] || '')}" onerror="this.style.display='none'" style="${p.image?'':'display:none'}">
+      <img src="${escHtml(getFirstResolvedImage(p))}" onerror="this.style.display='none'" style="${p.image?'':'display:none'}">
       ${!p.image?'<span style="color:var(--text-muted);font-size:13px">请输入图片链接查看预览</span>':''}
     </div>
     <div class="form-buttons">
@@ -3019,7 +1748,7 @@ function updatePreview() {
     <div class="thumb-strip">
       ${urls.map(u=>`
         <div class="thumb-item">
-          <img src="${escHtml(u)}" loading="lazy" onerror="this.closest('.thumb-item').innerHTML='<span style=color:var(--danger);font-size:12px>加载失败</span>'">
+          <img src="${escHtml(resolveMediaUrl(u))}" loading="lazy" onerror="this.closest('.thumb-item').innerHTML='<span style=color:var(--danger);font-size:12px>加载失败</span>'">
         </div>
       `).join('')}
     </div>
@@ -3032,6 +1761,12 @@ function saveEdit() {
   const titleZh = document.getElementById('edit_titleZh').value.trim();
   const category = document.getElementById('edit_category').value;
   const model = document.getElementById('edit_model').value;
+  const idStr = (document.getElementById('edit_id')?.value || '').trim();
+  let desiredId = null;
+  if (idStr !== '') {
+    desiredId = parseInt(idStr, 10);
+    if (!Number.isFinite(desiredId) || !Number.isInteger(desiredId) || desiredId < 0) { showToast("ID 必须是大于等于 0 的整数", "error"); return; }
+  }
   const tagsStr = document.getElementById('edit_tags').value;
   const imageRaw = document.getElementById('edit_image').value.trim();
   const images = parseImageList(imageRaw);
@@ -3054,18 +1789,25 @@ function saveEdit() {
 
   if (state.editingPrompt.id === null) {
     // New
-    const newPrompt = { id:getNextId(prompts), title:title||titleZh, titleZh:titleZh||title, category, model, tags, image, images, showcase, showcaseButtons, promptEn, promptZh, prompt: (promptEn || promptZh), createdAt: now, updatedAt: now };
+    const newId = (desiredId!==null)?desiredId:getNextId(prompts);
+    if (prompts.some(p=>p.id===newId)) { showToast("ID 已存在，请换一个", "error"); return; }
+    const newPrompt = { id:newId, title:title||titleZh, titleZh:titleZh||title, category, model, tags, image, images, showcase, showcaseButtons, promptEn, promptZh, prompt: (promptEn || promptZh), createdAt: now, updatedAt: now };
     prompts.push(newPrompt);
     showToast("✓ 新增成功！ID: " + newPrompt.id);
   } else {
     // Edit
-    const idx = prompts.findIndex(p=>p.id===state.editingPrompt.id);
+    const oldId = state.editingPrompt.id;
+    const idx = prompts.findIndex(p=>p.id===oldId);
     if (idx>=0) {
-      prompts[idx] = { ...prompts[idx], title:title||titleZh, titleZh:titleZh||title, category, model, tags, image, images, showcase, showcaseButtons, promptEn, promptZh, prompt: (promptEn || promptZh), createdAt: prompts[idx].createdAt || now, updatedAt: now };
+      const newId = (desiredId!==null)?desiredId:oldId;
+      if (newId !== oldId && prompts.some(p=>p.id===newId)) { showToast("ID 已存在，请换一个", "error"); return; }
+      prompts[idx] = { ...prompts[idx], id:newId, title:title||titleZh, titleZh:titleZh||title, category, model, tags, image, images, showcase, showcaseButtons, promptEn, promptZh, prompt: (promptEn || promptZh), createdAt: prompts[idx].createdAt || now, updatedAt: now };
       showToast("✓ 保存成功！");
     }
   }
 
+  // Always keep ID desc order
+  sortPromptsCanonical(prompts);
   savePrompts(prompts);
   closeEditModal();
   renderAdmin();
@@ -3076,6 +1818,8 @@ function deletePrompt(id) {
   if (!p) return;
   if (!confirm(`确定要删除这条提示词吗？\n\nID: ${p.id}\n标题: ${p.titleZh || p.title}`)) return;
   prompts = prompts.filter(x=>x.id!==id);
+  // Always keep ID desc order
+  sortPromptsCanonical(prompts);
   savePrompts(prompts);
   showToast("✓ 已删除");
   renderAdmin();
@@ -3093,7 +1837,17 @@ document.addEventListener('keydown', e => {
 });
 
 // ══════ INIT ══════
-renderFront();
+(async function init(){
+  // 先用本地缓存/内置数据渲染一帧，避免白屏
+  renderFront();
+
+  // 每次打开/刷新：强制重新读取根目录 JSON（如果存在）
+  const updated = await refreshFromRootJSON({ silent: true });
+  if(updated){
+    if(state.currentPage === 'admin') renderAdmin();
+    else renderFront();
+  }
+})();
 
 // ══════ INFO BUTTONS CONFIG (Admin) ══════
 
@@ -3150,7 +1904,7 @@ function openHomeConfig(){
             <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
               <div style="color:rgba(255,255,255,0.6); font-size:12px;">预览：</div>
               <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.08); border-radius:14px; background:rgba(255,255,255,0.03);">
-                ${hc.logoImage?`<img src="${escHtml(hc.logoImage)}" style="width:28px;height:28px;border-radius:9px;object-fit:cover;" onerror="this.style.display='none'">`:`<div class="nav-logo" style="width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;">${escHtml(hc.logoText||'Ai')}</div>`}
+                ${hc.logoImage?`<img src="${escHtml(resolveMediaUrl(hc.logoImage))}" style="width:28px;height:28px;border-radius:9px;object-fit:cover;" onerror="this.style.display='none'">`:`<div class="nav-logo" style="width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;">${escHtml(hc.logoText||'Ai')}</div>`}
                 <div style="font-weight:700;">${escHtml(hc.siteName||'ZrhAi')}</div>
               </div>
             </div>
@@ -3341,42 +2095,5 @@ function closeInfoButtonsConfig(){
 }
 
 </script>
-
-
-<script>
-(function() {
-  var ws = new WebSocket('ws://' + window.location.host + 
-             '/jb-server-page?reloadMode=RELOAD_ON_SAVE&'+
-             'referrer=' + encodeURIComponent(window.location.pathname));
-  ws.onmessage = function (msg) {
-      if (msg.data === 'reload') {
-          window.location.reload();
-      }
-      if (msg.data.startsWith('update-css ')) {
-          var messageId = msg.data.substring(11);
-          var links = document.getElementsByTagName('link');
-          for (var i = 0; i < links.length; i++) {
-              var link = links[i];
-              if (link.rel !== 'stylesheet') continue;
-              var clonedLink = link.cloneNode(true);
-              var newHref = link.href.replace(/(&|\?)jbUpdateLinksId=\d+/, "$1jbUpdateLinksId=" + messageId);
-              if (newHref !== link.href) {
-                clonedLink.href = newHref;
-              }
-              else {
-                var indexOfQuest = newHref.indexOf('?');
-                if (indexOfQuest >= 0) {
-                  // to support ?foo#hash 
-                  clonedLink.href = newHref.substring(0, indexOfQuest + 1) + 'jbUpdateLinksId=' + messageId + '&' + 
-                                    newHref.substring(indexOfQuest + 1);
-                }
-                else {
-                  clonedLink.href += '?' + 'jbUpdateLinksId=' + messageId;
-                }
-              }
-              link.replaceWith(clonedLink);
-          }
-      }
-  };
-})();
-</script></body><chatgpt-sidebar data-gpts-theme="light"></chatgpt-sidebar></html>
+</body>
+</html>
